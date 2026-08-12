@@ -37,7 +37,7 @@ export function Screen({
   const { colors } = useAppTheme();
   const background = { backgroundColor: colors.background };
   return (
-    <SafeAreaView edges={["top"]} style={[styles.safe, background, style]}>
+    <SafeAreaView collapsable={false} edges={["top"]} style={[styles.safe, background, style]}>
       <View
         style={[
           styles.orb,

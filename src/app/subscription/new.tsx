@@ -4,13 +4,29 @@ import { useRouter } from "expo-router";
 import { Screen } from "@/components/Screen";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { SubscriptionForm } from "@/components/SubscriptionForm";
+import { DataErrorState, LoadingState } from "@/components/DataState";
 import type { SubscriptionDraft } from "@/domain/subscription";
 import { useData } from "@/hooks/useData";
 
 export default function NewSubscriptionScreen() {
   const router = useRouter();
-  const { categories, settings, addSubscription } = useData();
+  const { status, error, categories, settings, addSubscription } = useData();
   const [submitting, setSubmitting] = useState(false);
+
+  if (status === "loading") {
+    return (
+      <Screen scroll={false} header={<ScreenHeader title="New subscription" showBack />}>
+        <LoadingState />
+      </Screen>
+    );
+  }
+  if (status === "error") {
+    return (
+      <Screen scroll={false} header={<ScreenHeader title="New subscription" showBack />}>
+        <DataErrorState message={error} />
+      </Screen>
+    );
+  }
 
   const handleSubmit = async (draft: SubscriptionDraft) => {
     setSubmitting(true);

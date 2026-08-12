@@ -40,6 +40,10 @@ export function DatePickerField({
       <FieldLabel required={isRequired}>{label}</FieldLabel>
       <Pressable
         onPress={open}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityValue={{ text: formatFullDate(value) }}
+        accessibilityHint={errorMessage}
         style={({ pressed }) => [
           styles.trigger,
           {
@@ -55,7 +59,7 @@ export function DatePickerField({
       {Platform.OS === "ios" && show ? (
         <Modal transparent animationType="fade" onRequestClose={() => setShow(false)}>
           <Pressable style={styles.backdrop} onPress={() => setShow(false)}>
-            <Pressable style={styles.sheetWrap} onPress={() => {}}>
+            <Pressable style={styles.sheetWrap} onPress={() => {}} accessibilityViewIsModal>
               <GlassSurface style={styles.sheet}>
                 <View style={styles.header}>
                   <Text style={[styles.title, { color: colors.text }]}>{label}</Text>

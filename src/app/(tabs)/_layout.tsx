@@ -1,50 +1,58 @@
-import React from "react";
-import { Platform, type ColorValue } from "react-native";
-import { Tabs } from "expo-router";
-import { Icon, type IconName } from "@/components/Icon";
+import { Platform } from "react-native";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
+
 import { useAppTheme } from "@/theme";
+
 export default function TabsLayout() {
-  const { colors } = useAppTheme();
-  const icon =
-    (filled: IconName, outline: IconName) =>
-    ({ color, size, focused }: { color: ColorValue; size: number; focused: boolean }) => (
-      <Icon name={focused ? filled : outline} size={size} color={color} />
-    );
+  const { colors, dark } = useAppTheme();
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textMuted,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
-        tabBarStyle: {
-          position: "absolute",
-          height: Platform.OS === "ios" ? 86 : 68,
-          paddingTop: 8,
-          backgroundColor: colors.glass,
-          borderTopColor: colors.glassBorder,
-          borderTopWidth: 1,
-          ...(Platform.OS === "web" ? { backdropFilter: "blur(22px)" } : {}),
-        },
-        sceneStyle: { backgroundColor: "transparent" },
+    <NativeTabs
+      tintColor={colors.primary}
+      iconColor={{ default: colors.textMuted, selected: colors.primary }}
+      labelStyle={{
+        default: { color: colors.textMuted, fontSize: 11, fontWeight: "600" },
+        selected: { color: colors.primary, fontSize: 11, fontWeight: "600" },
       }}
+      backgroundColor={Platform.OS === "android" ? colors.surface : undefined}
+      indicatorColor={colors.primarySoft}
+      rippleColor={colors.primarySoft}
+      labelVisibilityMode="labeled"
+      disableTransparentOnScrollEdge
+      minimizeBehavior="never"
+      unstable_nativeProps={{ colorScheme: dark ? "dark" : "light" }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{ title: "Home", tabBarIcon: icon("home", "home-outline") }}
-      />
-      <Tabs.Screen
+      <NativeTabs.Trigger name="index" contentStyle={{ backgroundColor: colors.background }}>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "house", selected: "house.fill" }}
+          md={{ default: "home", selected: "home_filled" }}
+        />
+        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger
         name="subscriptions"
-        options={{ title: "Subscriptions", tabBarIcon: icon("list", "list-outline") }}
-      />
-      <Tabs.Screen
-        name="upcoming"
-        options={{ title: "Upcoming", tabBarIcon: icon("calendar", "calendar-outline") }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{ title: "Settings", tabBarIcon: icon("settings", "settings-outline") }}
-      />
-    </Tabs>
+        contentStyle={{ backgroundColor: colors.background }}
+      >
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "list.bullet.rectangle", selected: "list.bullet.rectangle.fill" }}
+          md="list_alt"
+        />
+        <NativeTabs.Trigger.Label>Subscriptions</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="upcoming" contentStyle={{ backgroundColor: colors.background }}>
+        <NativeTabs.Trigger.Icon sf="calendar" md="calendar_month" />
+        <NativeTabs.Trigger.Label>Upcoming</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="settings" contentStyle={{ backgroundColor: colors.background }}>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "gearshape", selected: "gearshape.fill" }}
+          md="settings"
+        />
+        <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { EmptyState } from "@/components/EmptyState";
+import { DataErrorState, LoadingState } from "@/components/DataState";
 import { Screen } from "@/components/Screen";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { SubscriptionForm } from "@/components/SubscriptionForm";
@@ -12,7 +13,7 @@ import { useData } from "@/hooks/useData";
 export default function EditSubscriptionScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id: string }>();
-  const { subscriptions, categories, settings, updateSubscription } = useData();
+  const { status, error, subscriptions, categories, settings, updateSubscription } = useData();
   const [submitting, setSubmitting] = useState(false);
 
   const subscription = useMemo(
@@ -23,6 +24,21 @@ export default function EditSubscriptionScreen() {
     () => (subscription ? toFormValues(subscription) : undefined),
     [subscription],
   );
+
+  if (status === "loading") {
+    return (
+      <Screen scroll={false} header={<ScreenHeader title="Edit subscription" showBack />}>
+        <LoadingState />
+      </Screen>
+    );
+  }
+  if (status === "error") {
+    return (
+      <Screen scroll={false} header={<ScreenHeader title="Edit subscription" showBack />}>
+        <DataErrorState message={error} />
+      </Screen>
+    );
+  }
 
   if (!subscription) {
     return (

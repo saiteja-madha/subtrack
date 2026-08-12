@@ -15,7 +15,30 @@ import {
 import { BlurView } from "expo-blur";
 import { GlassView, isGlassEffectAPIAvailable } from "expo-glass-effect";
 
+import { useReduceTransparency } from "@/hooks/useReduceTransparency";
 import { elevation, radii, useAppTheme } from "@/theme";
+
+export function SurfaceCard({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const { colors } = useAppTheme();
+
+  return (
+    <View
+      style={[
+        styles.surface,
+        { backgroundColor: colors.surface, borderColor: colors.divider },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
+}
 
 export function GlassSurface({
   children,
@@ -25,16 +48,34 @@ export function GlassSurface({
   style?: StyleProp<ViewStyle>;
 }) {
   const { colors, dark } = useAppTheme();
-  const surfaceStyle = [
+  const reduceTransparency = useReduceTransparency();
+  const glassStyle = [styles.glass, { borderColor: colors.glassBorder }, elevation, style];
+  const fallbackStyle = [
     styles.glass,
     { backgroundColor: colors.glass, borderColor: colors.glassBorder },
     elevation,
     style,
   ];
+
+  if (reduceTransparency) {
+    return (
+      <View
+        style={[
+          styles.glass,
+          { backgroundColor: colors.surfaceStrong, borderColor: colors.divider },
+          elevation,
+          style,
+        ]}
+      >
+        {children}
+      </View>
+    );
+  }
+
   if (Platform.OS === "ios" && isGlassEffectAPIAvailable()) {
     return (
       <GlassView
-        style={surfaceStyle}
+        style={glassStyle}
         glassEffectStyle="regular"
         colorScheme={dark ? "dark" : "light"}
       >
@@ -46,10 +87,67 @@ export function GlassSurface({
     <BlurView
       intensity={Platform.OS === "web" ? 35 : 22}
       tint={dark ? "dark" : "light"}
-      style={surfaceStyle}
+      style={fallbackStyle}
     >
       {children}
     </BlurView>
+  );
+}
+
+export function GlassIconButton({
+  icon,
+  disabled,
+  style,
+  ...props
+}: Omit<PressableProps, "children"> & {
+  icon: React.ReactNode;
+}) {
+  const { colors, dark } = useAppTheme();
+  const reduceTransparency = useReduceTransparency();
+  const glassAvailable =
+    Platform.OS === "ios" && isGlassEffectAPIAvailable() && !reduceTransparency;
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      disabled={disabled}
+      hitSlop={8}
+      style={({ pressed }) => [
+        styles.glassIconButton,
+        !glassAvailable && { transform: [{ scale: pressed ? 0.94 : 1 }] },
+        disabled && styles.disabled,
+        style as StyleProp<ViewStyle>,
+      ]}
+      {...props}
+    >
+      {glassAvailable ? (
+        <GlassView
+          style={[styles.glassIconBackground, { borderColor: colors.glassBorder }]}
+          glassEffectStyle="regular"
+          colorScheme={dark ? "dark" : "light"}
+          isInteractive
+        />
+      ) : reduceTransparency ? (
+        <View
+          style={[
+            styles.glassIconBackground,
+            styles.nonInteractive,
+            { backgroundColor: colors.surfaceStrong, borderColor: colors.divider },
+          ]}
+        />
+      ) : (
+        <BlurView
+          intensity={Platform.OS === "web" ? 40 : 28}
+          tint={dark ? "dark" : "light"}
+          style={[
+            styles.glassIconBackground,
+            styles.nonInteractive,
+            { backgroundColor: colors.glass, borderColor: colors.glassBorder },
+          ]}
+        />
+      )}
+      <View style={[styles.glassIconContent, styles.nonInteractive]}>{icon}</View>
+    </Pressable>
   );
 }
 
@@ -130,7 +228,11 @@ export function FieldLabel({
 
 export function FieldError({ children }: { children?: React.ReactNode }) {
   const { colors } = useAppTheme();
-  return children ? <Text style={[styles.error, { color: colors.danger }]}>{children}</Text> : null;
+  return children ? (
+    <Text accessibilityLiveRegion="polite" style={[styles.error, { color: colors.danger }]}>
+      {children}
+    </Text>
+  ) : null;
 }
 
 export function AppTextInput({ style, multiline, ...props }: TextInputProps) {
@@ -170,7 +272,27 @@ export function Divider({ inset = 0 }: { inset?: number }) {
 }
 
 const styles = StyleSheet.create({
+  surface: { borderRadius: radii.lg, borderWidth: StyleSheet.hairlineWidth, overflow: "hidden" },
   glass: { borderRadius: radii.lg, borderWidth: 1, overflow: "hidden" },
+  glassIconButton: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+  },
+  glassIconBackground: {
+    position: "absolute",
+    inset: 0,
+    borderRadius: 26,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  glassIconContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  disabled: { opacity: 0.45 },
+  nonInteractive: { pointerEvents: "none" },
   button: {
     minHeight: 48,
     borderRadius: radii.md,
@@ -181,7 +303,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonCompact: { minHeight: 38, paddingHorizontal: 12, borderRadius: 12 },
+  buttonCompact: { minHeight: 44, paddingHorizontal: 14, borderRadius: 14 },
   buttonLabel: { fontSize: 15, fontWeight: "700", letterSpacing: 0.1 },
   label: { fontSize: 13, fontWeight: "600", marginBottom: 8 },
   error: { fontSize: 12, marginTop: 6 },

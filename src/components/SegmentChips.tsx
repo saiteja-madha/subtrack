@@ -10,11 +10,13 @@ export function SegmentChips({
   value,
   onChange,
   noneLabel,
+  groupLabel,
 }: {
   options: SegmentOption[];
   value: string | null;
   onChange: (value: string | null) => void;
   noneLabel?: string;
+  groupLabel?: string;
   size?: "sm" | "md" | "lg";
 }) {
   const { colors } = useAppTheme();
@@ -24,6 +26,8 @@ export function SegmentChips({
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.row}
+      accessibilityRole="radiogroup"
+      accessibilityLabel={groupLabel}
     >
       {all.map((option) => {
         const actual = option.value === "__none__" ? null : option.value;
@@ -40,8 +44,9 @@ export function SegmentChips({
                 opacity: pressed ? 0.72 : 1,
               },
             ]}
-            accessibilityRole="button"
-            accessibilityState={{ selected }}
+            accessibilityRole="radio"
+            accessibilityLabel={groupLabel ? `${groupLabel}, ${option.label}` : option.label}
+            accessibilityState={{ checked: selected }}
           >
             <Text
               style={[styles.label, { color: selected ? colors.onPrimary : colors.textSecondary }]}
@@ -57,7 +62,7 @@ export function SegmentChips({
 const styles = StyleSheet.create({
   row: { gap: 8, paddingVertical: 2 },
   chip: {
-    minHeight: 34,
+    minHeight: 44,
     justifyContent: "center",
     paddingHorizontal: 13,
     borderRadius: 999,

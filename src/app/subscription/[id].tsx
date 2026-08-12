@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { AppButton, Divider, GlassSurface } from "@/components/ui";
+import { AppButton, Divider, SurfaceCard } from "@/components/ui";
 import { CategoryAvatar } from "@/components/CategoryAvatar";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { DataErrorState, LoadingState } from "@/components/DataState";
 import { EmptyState } from "@/components/EmptyState";
 import { Screen } from "@/components/Screen";
 import { ScreenHeader } from "@/components/ScreenHeader";
@@ -19,8 +20,15 @@ import { formatCurrency } from "@/utils/money";
 export default function SubscriptionDetailsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { subscriptions, categories, settings, setSubscriptionStatus, deleteSubscription } =
-    useData();
+  const {
+    status: dataStatus,
+    error,
+    subscriptions,
+    categories,
+    settings,
+    setSubscriptionStatus,
+    deleteSubscription,
+  } = useData();
   const { colors } = useAppTheme();
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -29,6 +37,18 @@ export default function SubscriptionDetailsScreen() {
     () => (sub ? categories.find((c) => c.id === sub.categoryId) : undefined),
     [categories, sub],
   );
+  if (dataStatus === "loading")
+    return (
+      <Screen scroll={false} header={<ScreenHeader title="Details" showBack />}>
+        <LoadingState />
+      </Screen>
+    );
+  if (dataStatus === "error")
+    return (
+      <Screen scroll={false} header={<ScreenHeader title="Details" showBack />}>
+        <DataErrorState message={error} />
+      </Screen>
+    );
   if (!sub)
     return (
       <Screen header={<ScreenHeader title="Subscription" showBack />}>
@@ -91,7 +111,7 @@ export default function SubscriptionDetailsScreen() {
             <Text style={[styles.cycle, { color: colors.textMuted }]}> / {cycle}</Text>
           </Text>
         </View>
-        <GlassSurface style={styles.info}>
+        <SurfaceCard style={styles.info}>
           <InfoRow label="Next payment" value={formatFullDate(getNextBillingDate(sub))} />
           <Divider />
           <InfoRow label="Billing cycle" value={cycle} />
@@ -118,7 +138,7 @@ export default function SubscriptionDetailsScreen() {
               </View>
             </>
           ) : null}
-        </GlassSurface>
+        </SurfaceCard>
         <View style={styles.actions}>
           {sub.status !== "cancelled" ? (
             <View style={styles.actionRow}>

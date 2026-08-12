@@ -32,7 +32,6 @@ type LoadStatus = "loading" | "ready" | "error";
 interface DataContextValue {
   db: Db | null;
   status: LoadStatus;
-  isRefreshing: boolean;
   error: string | null;
   subscriptions: Subscription[];
   categories: Category[];
@@ -53,7 +52,6 @@ const DataContext = createContext<DataContextValue | null>(null);
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [db, setDb] = useState<Db | null>(null);
   const [status, setStatus] = useState<LoadStatus>("loading");
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -106,12 +104,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const refresh = useCallback(async () => {
     if (!db) return;
-    setIsRefreshing(true);
-    try {
-      await loadAll(db);
-    } finally {
-      setIsRefreshing(false);
-    }
+    await loadAll(db);
   }, [db, loadAll]);
 
   const addSubscription = useCallback(
@@ -208,7 +201,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     () => ({
       db,
       status,
-      isRefreshing,
       error,
       subscriptions,
       categories,
@@ -226,7 +218,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [
       db,
       status,
-      isRefreshing,
       error,
       subscriptions,
       categories,

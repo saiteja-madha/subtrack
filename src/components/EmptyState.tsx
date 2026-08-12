@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
-import { AppButton, GlassSurface } from "@/components/ui";
+import { AppButton, SurfaceCard } from "@/components/ui";
 import { Icon, type IconName } from "@/components/Icon";
 import { useAppTheme } from "@/theme";
 export function EmptyState({
@@ -10,6 +10,7 @@ export function EmptyState({
   actionLabel,
   onAction,
   style,
+  fill = false,
 }: {
   icon: IconName;
   title: string;
@@ -17,11 +18,12 @@ export function EmptyState({
   actionLabel?: string;
   onAction?: () => void;
   style?: StyleProp<ViewStyle>;
+  fill?: boolean;
 }) {
   const { colors } = useAppTheme();
   return (
-    <View style={[styles.outer, style]}>
-      <GlassSurface style={styles.card}>
+    <View style={[styles.outer, fill && styles.fill, style]}>
+      <SurfaceCard style={styles.card}>
         <View style={[styles.icon, { backgroundColor: colors.primarySoft }]}>
           <Icon name={icon} size={30} color={colors.primary} />
         </View>
@@ -32,12 +34,13 @@ export function EmptyState({
         {actionLabel && onAction ? (
           <AppButton label={actionLabel} onPress={onAction} style={styles.action} />
         ) : null}
-      </GlassSurface>
+      </SurfaceCard>
     </View>
   );
 }
 const styles = StyleSheet.create({
-  outer: { padding: 24, alignItems: "center", justifyContent: "center" },
+  outer: { width: "100%", padding: 24, alignItems: "center", justifyContent: "center" },
+  fill: { flex: 1 },
   card: {
     width: "100%",
     maxWidth: 480,

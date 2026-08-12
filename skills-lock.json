@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "design-audit": {
+      "source": "devanshuDesai/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/design-audit/SKILL.md",
+      "computedHash": "efe95e615a1a0969cb496c46ad8dc6990edf8b05290df676c77bf244c058f9de"
+    },
+    "expo-liquid-glass": {
+      "source": "devanshuDesai/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/expo-liquid-glass/SKILL.md",
+      "computedHash": "54e019fbdcf965286d9eda859cc30376d53e0ea22d9b41384044e9a787599265"
+    }
+  }
+}

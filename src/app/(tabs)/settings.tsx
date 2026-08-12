@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { DataErrorState, LoadingState } from "@/components/DataState";
 import { Icon, type IconName } from "@/components/Icon";
 import { Screen } from "@/components/Screen";
 import { TabHeader } from "@/components/ScreenHeader";
 import { SegmentChips } from "@/components/SegmentChips";
 import { SelectField } from "@/components/SelectField";
-import { Divider, GlassSurface, SectionLabel } from "@/components/ui";
+import { Divider, SectionLabel, SurfaceCard } from "@/components/ui";
 import { CURRENCIES } from "@/constants/currencies";
 import { DEFAULT_REMINDER_OPTIONS } from "@/constants/reminders";
-import { APP_NAME, APP_VERSION, type AppSettings } from "@/domain/types";
+import { APP_NAME, type AppSettings } from "@/domain/types";
 import { useData } from "@/hooks/useData";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { pickBackupFile, readBackupJson, shareBackup } from "@/services/backupService";
 import { useAppTheme } from "@/theme";
 const APPEARANCE = [
@@ -57,7 +59,8 @@ function ActionRow({
 export default function SettingsScreen() {
   const { colors } = useAppTheme();
   const {
-    isRefreshing,
+    status,
+    error,
     db,
     settings,
     updateSettings,
@@ -66,8 +69,23 @@ export default function SettingsScreen() {
     seedDemo,
     refresh,
   } = useData();
+  const { isRefreshing, onRefresh } = usePullToRefresh(refresh);
   const [busy, setBusy] = useState<string | null>(null);
   const [resetOpen, setResetOpen] = useState(false);
+  if (status === "loading") {
+    return (
+      <Screen scroll={false} header={<TabHeader title="Settings" />}>
+        <LoadingState />
+      </Screen>
+    );
+  }
+  if (status === "error") {
+    return (
+      <Screen scroll={false} header={<TabHeader title="Settings" />}>
+        <DataErrorState message={error} />
+      </Screen>
+    );
+  }
   const run = async (key: string, fn: () => Promise<void>) => {
     setBusy(key);
     try {
@@ -99,19 +117,20 @@ export default function SettingsScreen() {
   return (
     <Screen
       refreshing={isRefreshing}
-      onRefresh={() => void refresh()}
+      onRefresh={onRefresh}
       contentContainerStyle={styles.bottom}
+      header={<TabHeader title="Settings" />}
     >
-      <TabHeader title="Settings" subtitle={`${APP_NAME} · Version ${APP_VERSION}`} />
       <View style={styles.content}>
         <View style={styles.section}>
           <SectionLabel>Preferences</SectionLabel>
-          <GlassSurface style={styles.card}>
+          <SurfaceCard style={styles.card}>
             <View>
               <Text style={[styles.fieldTitle, { color: colors.text }]}>Appearance</Text>
               <SegmentChips
                 options={APPEARANCE}
                 value={settings.appearance}
+                groupLabel="Appearance"
                 onChange={(v) =>
                   void updateSettings({ appearance: (v as AppSettings["appearance"]) ?? "system" })
                 }
@@ -135,6 +154,7 @@ export default function SettingsScreen() {
                 value={
                   settings.defaultReminderDays == null ? "-1" : String(settings.defaultReminderDays)
                 }
+                groupLabel="Default reminder"
                 onChange={(v) =>
                   void updateSettings({
                     defaultReminderDays: !v || v === "-1" ? null : parseInt(v, 10),
@@ -142,11 +162,11 @@ export default function SettingsScreen() {
                 }
               />
             </View>
-          </GlassSurface>
+          </SurfaceCard>
         </View>
         <View style={styles.section}>
           <SectionLabel>Your data</SectionLabel>
-          <GlassSurface>
+          <SurfaceCard>
             <ActionRow
               icon="share-outline"
               label="Export backup"
@@ -170,12 +190,12 @@ export default function SettingsScreen() {
               busy={busy === "reset"}
               onPress={() => setResetOpen(true)}
             />
-          </GlassSurface>
+          </SurfaceCard>
         </View>
         {__DEV__ ? (
           <View style={styles.section}>
             <SectionLabel>Developer</SectionLabel>
-            <GlassSurface>
+            <SurfaceCard>
               <ActionRow
                 icon="sparkles-outline"
                 label="Add sample data"
@@ -188,7 +208,7 @@ export default function SettingsScreen() {
                   })
                 }
               />
-            </GlassSurface>
+            </SurfaceCard>
           </View>
         ) : null}
         <Text style={[styles.footer, { color: colors.textMuted }]}>
@@ -209,7 +229,7 @@ export default function SettingsScreen() {
   );
 }
 const styles = StyleSheet.create({
-  bottom: { paddingBottom: 110 },
+  bottom: { paddingBottom: 32 },
   content: { paddingHorizontal: 20, gap: 26, width: "100%", maxWidth: 720, alignSelf: "center" },
   section: { gap: 10 },
   card: { padding: 18, gap: 20 },

@@ -32,7 +32,7 @@ export function ConfirmDialog({
       onRequestClose={() => onOpenChange(false)}
     >
       <Pressable style={styles.backdrop} onPress={() => onOpenChange(false)}>
-        <Pressable onPress={() => {}} style={styles.wrap}>
+        <Pressable onPress={() => {}} style={styles.wrap} accessibilityViewIsModal>
           <GlassSurface style={styles.dialog}>
             <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
             {message ? (

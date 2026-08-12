@@ -43,7 +43,7 @@ const light: AppColors = {
   glassBorder: "rgba(255,255,255,0.88)",
   text: "#131A2A",
   textSecondary: "#4E596E",
-  textMuted: "#7D8799",
+  textMuted: "#667085",
   primary: "#5B5CE2",
   primaryPressed: "#4849C6",
   primarySoft: "#E9E9FF",

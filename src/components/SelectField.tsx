@@ -42,6 +42,13 @@ export function SelectField({
       <FieldLabel required={isRequired}>{label}</FieldLabel>
       <Pressable
         onPress={() => setOpen(true)}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityValue={{
+          text: selected?.label ?? (value === null && noneLabel ? noneLabel : placeholder),
+        }}
+        accessibilityState={{ expanded: open }}
+        accessibilityHint={errorMessage}
         style={({ pressed }) => [
           styles.trigger,
           {
@@ -59,7 +66,7 @@ export function SelectField({
       <FieldError>{errorMessage}</FieldError>
       <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
-          <Pressable style={styles.sheetWrap} onPress={() => {}}>
+          <Pressable style={styles.sheetWrap} onPress={() => {}} accessibilityViewIsModal>
             <GlassSurface style={styles.sheet}>
               <Text style={[styles.title, { color: colors.text }]}>{label}</Text>
               <ScrollView style={styles.options} contentContainerStyle={styles.optionsContent}>
@@ -74,6 +81,9 @@ export function SelectField({
                           setOpen(false);
                         }}
                         style={({ pressed }) => [styles.option, { opacity: pressed ? 0.6 : 1 }]}
+                        accessibilityRole="radio"
+                        accessibilityLabel={option.label}
+                        accessibilityState={{ checked: active }}
                       >
                         {option.icon ? (
                           <Icon

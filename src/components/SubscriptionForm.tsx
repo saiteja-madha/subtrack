@@ -13,8 +13,8 @@ import {
   AppTextInput,
   FieldError,
   FieldLabel,
-  GlassSurface,
   SectionLabel,
+  SurfaceCard,
 } from "@/components/ui";
 import { CURRENCIES } from "@/constants/currencies";
 import { SUBSCRIPTION_REMINDER_OPTIONS } from "@/constants/reminders";
@@ -92,7 +92,7 @@ export function SubscriptionForm({
   const nextMin = values.startDate ? new Date(`${values.startDate}T00:00:00`) : new Date();
   return (
     <View style={styles.form}>
-      <GlassSurface style={styles.card}>
+      <SurfaceCard style={styles.card}>
         <View>
           <FieldLabel required>Name</FieldLabel>
           <AppTextInput
@@ -100,10 +100,12 @@ export function SubscriptionForm({
             onChangeText={(text) => set("name", text)}
             placeholder="e.g. Netflix"
             autoCapitalize="words"
+            accessibilityLabel="Name"
+            accessibilityHint={errors.name}
           />
           <FieldError>{errors.name}</FieldError>
         </View>
-      </GlassSurface>
+      </SurfaceCard>
       <Section title="Pricing">
         <CurrencyInput
           label="Amount"
@@ -174,6 +176,7 @@ export function SubscriptionForm({
             value={
               values.reminderDaysBefore == null ? "default" : String(values.reminderDaysBefore)
             }
+            groupLabel="Reminder"
             onChange={(v) =>
               set("reminderDaysBefore", v == null || v === "default" ? null : parseInt(v, 10))
             }
@@ -187,12 +190,13 @@ export function SubscriptionForm({
             <SegmentChips
               options={STATUS_OPTIONS}
               value={values.status}
+              groupLabel="Subscription status"
               onChange={(v) => set("status", (v as SubscriptionStatus) ?? "active")}
             />
           </View>
         </Section>
       ) : null}
-      <GlassSurface style={styles.card}>
+      <SurfaceCard style={styles.card}>
         <FieldLabel>Notes (optional)</FieldLabel>
         <AppTextInput
           value={values.notes}
@@ -200,8 +204,9 @@ export function SubscriptionForm({
           placeholder="Anything to remember…"
           multiline
           numberOfLines={3}
+          accessibilityLabel="Notes"
         />
-      </GlassSurface>
+      </SurfaceCard>
       <AppButton label={submitLabel} loading={isSubmitting} onPress={submit} />
     </View>
   );
@@ -210,9 +215,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <View style={styles.section}>
       <SectionLabel>{title}</SectionLabel>
-      <GlassSurface style={styles.card}>
+      <SurfaceCard style={styles.card}>
         <View style={styles.fields}>{children}</View>
-      </GlassSurface>
+      </SurfaceCard>
     </View>
   );
 }

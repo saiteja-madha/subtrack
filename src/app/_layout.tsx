@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 import { DataProvider, useData } from "@/hooks/useData";
@@ -23,8 +23,22 @@ function ThemeBridge() {
 
 function AppNavigator() {
   const { dark, colors } = useAppTheme();
+  const baseTheme = dark ? DarkTheme : DefaultTheme;
+  const navigationTheme = {
+    ...baseTheme,
+    colors: {
+      ...baseTheme.colors,
+      primary: colors.primary,
+      background: colors.background,
+      card: colors.surface,
+      text: colors.text,
+      border: colors.divider,
+      notification: colors.danger,
+    },
+  };
+
   return (
-    <>
+    <ThemeProvider value={navigationTheme}>
       <StatusBar style={dark ? "light" : "dark"} />
       <Stack
         screenOptions={{
@@ -38,6 +52,6 @@ function AppNavigator() {
         <Stack.Screen name="subscription/[id]" />
         <Stack.Screen name="subscription/[id]/edit" />
       </Stack>
-    </>
+    </ThemeProvider>
   );
 }

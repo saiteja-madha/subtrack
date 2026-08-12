@@ -17,13 +17,15 @@ export function TabHeader({
   const { colors } = useAppTheme();
   return (
     <View style={styles.tab}>
-      <View style={styles.flex}>
+      <View style={styles.tabTitleBlock}>
         <Text style={[styles.largeTitle, { color: colors.text }]}>{title}</Text>
         {subtitle ? (
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>{subtitle}</Text>
-        ) : null}
+        ) : (
+          <View style={styles.subtitlePlaceholder} />
+        )}
       </View>
-      {right ? <View style={styles.right}>{right}</View> : null}
+      <View style={styles.right}>{right}</View>
     </View>
   );
 }
@@ -65,16 +67,22 @@ export function ScreenHeader({
 
 const styles = StyleSheet.create({
   tab: {
+    height: 90,
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 16,
   },
-  flex: { flex: 1 },
+  tabTitleBlock: { flex: 1, height: 57, justifyContent: "flex-start" },
   largeTitle: { fontSize: 32, lineHeight: 38, fontWeight: "800", letterSpacing: -1 },
-  subtitle: { fontSize: 13, marginTop: 3 },
-  right: { marginLeft: 14 },
+  subtitle: { fontSize: 13, lineHeight: 16, marginTop: 3 },
+  subtitlePlaceholder: { height: 16, marginTop: 3 },
+  right: {
+    width: 52,
+    height: 52,
+    marginLeft: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   header: {
     height: 58,
     flexDirection: "row",

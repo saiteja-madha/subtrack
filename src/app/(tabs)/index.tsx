@@ -1,29 +1,36 @@
+import { AddSubscriptionButton } from "@/components/AddSubscriptionButton";
+import { DataErrorState, LoadingState } from "@/components/DataState";
 import { EmptyState } from "@/components/EmptyState";
-import { Icon } from "@/components/Icon";
 import { Screen } from "@/components/Screen";
 import { TabHeader } from "@/components/ScreenHeader";
 import { SpendSummary } from "@/components/SpendSummary";
 import { SubscriptionListItem } from "@/components/SubscriptionListItem";
-import { AppButton, Divider, GlassSurface } from "@/components/ui";
+import { Divider, SurfaceCard } from "@/components/ui";
 import { UpcomingRenewalItem } from "@/components/UpcomingRenewalItem";
 import { getSpendSummary } from "@/domain/analytics";
 import type { Subscription } from "@/domain/types";
 import { useData } from "@/hooks/useData";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { useAppTheme } from "@/theme";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 export default function HomeScreen() {
   const router = useRouter();
-  const { status, isRefreshing, subscriptions, categories, settings, refresh } = useData();
+  const { status, error, subscriptions, categories, settings, refresh } = useData();
+  const { isRefreshing, onRefresh } = usePullToRefresh(refresh);
   const { colors } = useAppTheme();
   const openNew = () => router.push("/subscription/new");
   if (status === "loading")
     return (
-      <Screen scroll={false}>
-        <View style={styles.center}>
-          <Text style={{ color: colors.textMuted }}>Loading your subscriptions…</Text>
-        </View>
+      <Screen scroll={false} header={<TabHeader title="SubTrack" />}>
+        <LoadingState />
+      </Screen>
+    );
+  if (status === "error")
+    return (
+      <Screen scroll={false} header={<TabHeader title="SubTrack" />}>
+        <DataErrorState message={error} />
       </Screen>
     );
   const map = new Map(categories.map((c) => [c.id, c]));
@@ -33,34 +40,33 @@ export default function HomeScreen() {
   const details = (s: Subscription) =>
     router.push({ pathname: "/subscription/[id]", params: { id: s.id } });
   return (
-    <Screen refreshing={isRefreshing} onRefresh={refresh} contentContainerStyle={styles.bottom}>
-      <TabHeader
-        title="SubTrack"
-        subtitle={`${subscriptions.length} subscription${subscriptions.length === 1 ? "" : "s"} tracked`}
-        right={
-          <AppButton
-            compact
-            icon={<Icon name="add" size={21} color={colors.onPrimary} />}
-            onPress={openNew}
-          />
-        }
-      />
+    <Screen
+      refreshing={isRefreshing}
+      onRefresh={onRefresh}
+      contentContainerStyle={styles.bottom}
+      header={
+        <TabHeader
+          title="SubTrack"
+          subtitle={`${subscriptions.length} subscription${subscriptions.length === 1 ? "" : "s"} tracked`}
+          right={<AddSubscriptionButton onPress={openNew} />}
+        />
+      }
+    >
       {subscriptions.length === 0 ? (
-        <View style={styles.center}>
-          <EmptyState
-            icon="card-outline"
-            title="Your spending, made clear"
-            message="Add your first subscription to see totals, renewal dates, and reminders in one calm place."
-            actionLabel="Add subscription"
-            onAction={openNew}
-          />
-        </View>
+        <EmptyState
+          fill
+          icon="card-outline"
+          title="Your spending, made clear"
+          message="Add your first subscription to see totals, renewal dates, and reminders in one calm place."
+          actionLabel="Add subscription"
+          onAction={openNew}
+        />
       ) : (
         <View style={styles.content}>
           <SpendSummary summary={summary} preferredCurrency={settings.currency} />
           {due.length ? (
             <Group title="Due soon" detail="Next 7 days">
-              <GlassSurface style={styles.list}>
+              <SurfaceCard style={styles.list}>
                 {due.map((r, i) => (
                   <React.Fragment key={r.subscription.id}>
                     {i ? <Divider inset={4} /> : null}
@@ -70,12 +76,12 @@ export default function HomeScreen() {
                     />
                   </React.Fragment>
                 ))}
-              </GlassSurface>
+              </SurfaceCard>
             </Group>
           ) : null}
           {recent.length ? (
             <Group title="Recent">
-              <GlassSurface style={styles.list}>
+              <SurfaceCard style={styles.list}>
                 {recent.map((s, i) => (
                   <React.Fragment key={s.id}>
                     {i ? <Divider inset={10} /> : null}
@@ -86,10 +92,9 @@ export default function HomeScreen() {
                     />
                   </React.Fragment>
                 ))}
-              </GlassSurface>
+              </SurfaceCard>
             </Group>
           ) : null}
-          <AppButton tone="secondary" label="Add another subscription" onPress={openNew} />
         </View>
       )}
     </Screen>
@@ -116,8 +121,7 @@ function Group({
   );
 }
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  bottom: { paddingBottom: 110 },
+  bottom: { paddingBottom: 32 },
   content: { gap: 24, paddingHorizontal: 20, width: "100%", maxWidth: 760, alignSelf: "center" },
   group: { gap: 9 },
   groupHead: {

@@ -31,6 +31,7 @@ export function BillingCyclePicker({
       <SegmentChips
         options={BILLING_CYCLE_PRESETS}
         value={cycle}
+        groupLabel="Billing cycle"
         onChange={(v) => onCycleChange((v as BillingCyclePreset) ?? "monthly")}
       />
       {cycle === "custom" ? (
@@ -43,6 +44,7 @@ export function BillingCyclePicker({
               keyboardType="number-pad"
               inputMode="numeric"
               placeholder="e.g. 6"
+              accessibilityLabel="Billing cycle interval"
             />
             <FieldError>{errorMessage}</FieldError>
           </View>
@@ -51,6 +53,7 @@ export function BillingCyclePicker({
             <SegmentChips
               options={CUSTOM_UNITS}
               value={customUnit}
+              groupLabel="Billing cycle unit"
               onChange={(v) => onCustomUnitChange((v as BillingUnit) ?? "month")}
             />
           </View>

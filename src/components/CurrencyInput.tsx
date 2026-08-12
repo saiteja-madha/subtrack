@@ -26,7 +26,7 @@ export function CurrencyInput({
     <View>
       <FieldLabel required={isRequired}>{label}</FieldLabel>
       <View>
-        <View pointerEvents="none" style={styles.symbolWrap}>
+        <View style={[styles.symbolWrap, styles.nonInteractive]}>
           <Text style={[styles.symbol, { color: colors.textMuted }]}>
             {getCurrencyInfo(currency).symbol}
           </Text>
@@ -39,6 +39,8 @@ export function CurrencyInput({
           keyboardType="decimal-pad"
           inputMode="decimal"
           maxLength={14}
+          accessibilityLabel={label}
+          accessibilityHint={errorMessage}
         />
       </View>
       <FieldError>{errorMessage}</FieldError>
@@ -56,4 +58,5 @@ const styles = StyleSheet.create({
   },
   symbol: { fontSize: 16, fontWeight: "600" },
   input: { paddingLeft: 35 },
+  nonInteractive: { pointerEvents: "none" },
 });
