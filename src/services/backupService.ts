@@ -1,6 +1,5 @@
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import { Platform } from "react-native";
 
 import type { Db } from "@/db/database";
 import { BackupError, buildBackup } from "@/services/backupDataService";
@@ -26,7 +25,7 @@ export async function exportBackupToFile(db: Db): Promise<{ uri: string; fileNam
 }
 
 export async function shareBackup(db: Db): Promise<void> {
-  if (Platform.OS === "web") {
+  if (process.env.EXPO_OS === "web") {
     const data = await buildBackup(db);
     const fileName = backupFileName();
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -52,7 +51,7 @@ export async function shareBackup(db: Db): Promise<void> {
 
 /** Opens the system file picker and imports the selected JSON backup. */
 export async function pickBackupFile(): Promise<{ uri: string } | null> {
-  if (Platform.OS === "web") {
+  if (process.env.EXPO_OS === "web") {
     return new Promise((resolve) => {
       const input = document.createElement("input");
       input.type = "file";
@@ -74,7 +73,7 @@ export async function pickBackupFile(): Promise<{ uri: string } | null> {
 }
 
 export function readBackupJson(uri: string): unknown {
-  if (Platform.OS === "web") {
+  if (process.env.EXPO_OS === "web") {
     if (!uri.trim()) throw new BackupError("The file is empty.");
     return parseJson(uri);
   }

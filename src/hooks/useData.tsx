@@ -1,12 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { openDatabase } from "@/db";
 import type { Db } from "@/db/database";
 import * as categoryRepo from "@/db/repositories/categoryRepository";
@@ -37,6 +29,7 @@ interface DataContextValue {
   categories: Category[];
   settings: AppSettings;
   refresh: () => Promise<void>;
+  retry: () => Promise<void>;
   addSubscription: (input: SubscriptionInput) => Promise<Subscription>;
   updateSubscription: (id: string, input: SubscriptionInput) => Promise<Subscription | null>;
   deleteSubscription: (id: string) => Promise<void>;
@@ -60,7 +53,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     appearance: "system",
     defaultReminderDays: null,
   });
-  const initializing = useRef(false);
 
   const loadAll = useCallback(async (database: Db) => {
     const [subs, cats, appSettings] = await Promise.all([
@@ -74,33 +66,25 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     void rescheduleAllReminders(subs, appSettings);
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    async function init() {
-      if (initializing.current) return;
-      initializing.current = true;
-      try {
-        const database = await openDatabase();
-        if (cancelled) return;
-        configureNotifications();
-        await categoryRepo.ensureDefaultCategories(database);
-        setDb(database);
-        await loadAll(database);
-        if (!cancelled) setStatus("ready");
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to initialize the database.");
-          setStatus("error");
-        }
-      } finally {
-        initializing.current = false;
-      }
+  const initialize = useCallback(async () => {
+    setStatus("loading");
+    setError(null);
+    try {
+      const database = await openDatabase();
+      configureNotifications();
+      await categoryRepo.ensureDefaultCategories(database);
+      setDb(database);
+      await loadAll(database);
+      setStatus("ready");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to initialize the database.");
+      setStatus("error");
     }
-    void init();
-    return () => {
-      cancelled = true;
-    };
   }, [loadAll]);
+
+  useEffect(() => {
+    void initialize();
+  }, [initialize]);
 
   const refresh = useCallback(async () => {
     if (!db) return;
@@ -206,6 +190,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       categories,
       settings,
       refresh,
+      retry: initialize,
       addSubscription,
       updateSubscription,
       deleteSubscription,
@@ -223,6 +208,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       categories,
       settings,
       refresh,
+      initialize,
       addSubscription,
       updateSubscription,
       deleteSubscription,
@@ -243,7 +229,7 @@ async function cancelAllRemindersFor(ids: string[]): Promise<void> {
 }
 
 export function useData(): DataContextValue {
-  const ctx = useContext(DataContext);
+  const ctx = React.use(DataContext);
   if (!ctx) {
     throw new Error("useData must be used within a DataProvider");
   }

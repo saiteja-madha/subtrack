@@ -1,7 +1,6 @@
 import React from "react";
 import {
   ActivityIndicator,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -72,7 +71,7 @@ export function GlassSurface({
     );
   }
 
-  if (Platform.OS === "ios" && isGlassEffectAPIAvailable()) {
+  if (process.env.EXPO_OS === "ios" && isGlassEffectAPIAvailable()) {
     return (
       <GlassView
         style={glassStyle}
@@ -85,7 +84,7 @@ export function GlassSurface({
   }
   return (
     <BlurView
-      intensity={Platform.OS === "web" ? 35 : 22}
+      intensity={process.env.EXPO_OS === "web" ? 35 : 22}
       tint={dark ? "dark" : "light"}
       style={fallbackStyle}
     >
@@ -105,7 +104,7 @@ export function GlassIconButton({
   const { colors, dark } = useAppTheme();
   const reduceTransparency = useReduceTransparency();
   const glassAvailable =
-    Platform.OS === "ios" && isGlassEffectAPIAvailable() && !reduceTransparency;
+    process.env.EXPO_OS === "ios" && isGlassEffectAPIAvailable() && !reduceTransparency;
 
   return (
     <Pressable
@@ -137,7 +136,7 @@ export function GlassIconButton({
         />
       ) : (
         <BlurView
-          intensity={Platform.OS === "web" ? 40 : 28}
+          intensity={process.env.EXPO_OS === "web" ? 40 : 28}
           tint={dark ? "dark" : "light"}
           style={[
             styles.glassIconBackground,
@@ -229,7 +228,11 @@ export function FieldLabel({
 export function FieldError({ children }: { children?: React.ReactNode }) {
   const { colors } = useAppTheme();
   return children ? (
-    <Text accessibilityLiveRegion="polite" style={[styles.error, { color: colors.danger }]}>
+    <Text
+      selectable
+      accessibilityLiveRegion="polite"
+      style={[styles.error, { color: colors.danger }]}
+    >
       {children}
     </Text>
   ) : null;
@@ -272,8 +275,13 @@ export function Divider({ inset = 0 }: { inset?: number }) {
 }
 
 const styles = StyleSheet.create({
-  surface: { borderRadius: radii.lg, borderWidth: StyleSheet.hairlineWidth, overflow: "hidden" },
-  glass: { borderRadius: radii.lg, borderWidth: 1, overflow: "hidden" },
+  surface: {
+    borderRadius: radii.lg,
+    borderCurve: "continuous",
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  glass: { borderRadius: radii.lg, borderCurve: "continuous", borderWidth: 1, overflow: "hidden" },
   glassIconButton: {
     width: 52,
     height: 52,

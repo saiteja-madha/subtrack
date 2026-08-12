@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { AccessibilityInfo, Platform } from "react-native";
+import { AccessibilityInfo } from "react-native";
 
 export function useReduceTransparency(): boolean {
-  const [enabled, setEnabled] = useState(Platform.OS === "ios");
+  const [enabled, setEnabled] = useState(process.env.EXPO_OS === "ios");
 
   useEffect(() => {
-    if (Platform.OS !== "ios") return;
+    if (process.env.EXPO_OS !== "ios") return;
 
     void AccessibilityInfo.isReduceTransparencyEnabled().then(setEnabled);
     const subscription = AccessibilityInfo.addEventListener(

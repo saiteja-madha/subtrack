@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { AppButton, Divider, SurfaceCard } from "@/components/ui";
+import { AppButton, Divider, GlassIconButton, SurfaceCard } from "@/components/ui";
 import { CategoryAvatar } from "@/components/CategoryAvatar";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { DataErrorState, LoadingState } from "@/components/DataState";
 import { EmptyState } from "@/components/EmptyState";
+import { Icon } from "@/components/Icon";
 import { Screen } from "@/components/Screen";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -39,19 +40,25 @@ export default function SubscriptionDetailsScreen() {
   );
   if (dataStatus === "loading")
     return (
-      <Screen scroll={false} header={<ScreenHeader title="Details" showBack />}>
+      <Screen
+        scroll={false}
+        header={<ScreenHeader title="Details" showBack backButtonVariant="glass" />}
+      >
         <LoadingState />
       </Screen>
     );
   if (dataStatus === "error")
     return (
-      <Screen scroll={false} header={<ScreenHeader title="Details" showBack />}>
+      <Screen
+        scroll={false}
+        header={<ScreenHeader title="Details" showBack backButtonVariant="glass" />}
+      >
         <DataErrorState message={error} />
       </Screen>
     );
   if (!sub)
     return (
-      <Screen header={<ScreenHeader title="Subscription" showBack />}>
+      <Screen header={<ScreenHeader title="Subscription" showBack backButtonVariant="glass" />}>
         <View style={styles.center}>
           <EmptyState
             icon="alert-circle-outline"
@@ -86,11 +93,11 @@ export default function SubscriptionDetailsScreen() {
         <ScreenHeader
           title="Details"
           showBack
+          backButtonVariant="glass"
           right={
-            <AppButton
-              compact
-              tone="ghost"
-              label="Edit"
+            <GlassIconButton
+              icon={<Icon name="pencil" size={21} color={colors.text} />}
+              accessibilityLabel="Edit subscription"
               disabled={busy}
               onPress={() =>
                 router.push({ pathname: "/subscription/[id]/edit", params: { id: sub.id } })
@@ -104,9 +111,11 @@ export default function SubscriptionDetailsScreen() {
       <View style={styles.content}>
         <View style={styles.hero}>
           <CategoryAvatar category={category} name={sub.name} size={76} />
-          <Text style={[styles.name, { color: colors.text }]}>{sub.name}</Text>
+          <Text selectable style={[styles.name, { color: colors.text }]}>
+            {sub.name}
+          </Text>
           <StatusBadge status={sub.status} size="md" />
-          <Text style={[styles.price, { color: colors.text }]}>
+          <Text selectable style={[styles.price, styles.tabular, { color: colors.text }]}>
             {formatCurrency(minorToMajor(sub.priceMinor, sub.currency), sub.currency)}
             <Text style={[styles.cycle, { color: colors.textMuted }]}> / {cycle}</Text>
           </Text>
@@ -134,7 +143,9 @@ export default function SubscriptionDetailsScreen() {
               <Divider />
               <View>
                 <Text style={[styles.infoLabel, { color: colors.textMuted }]}>Notes</Text>
-                <Text style={[styles.notes, { color: colors.text }]}>{sub.notes}</Text>
+                <Text selectable style={[styles.notes, { color: colors.text }]}>
+                  {sub.notes}
+                </Text>
               </View>
             </>
           ) : null}
@@ -191,7 +202,9 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.infoRow}>
       <Text style={[styles.infoLabel, { color: colors.textMuted }]}>{label}</Text>
-      <Text style={[styles.infoValue, { color: colors.text }]}>{value}</Text>
+      <Text selectable style={[styles.infoValue, { color: colors.text }]}>
+        {value}
+      </Text>
     </View>
   );
 }
@@ -211,4 +224,5 @@ const styles = StyleSheet.create({
   actions: { gap: 10 },
   actionRow: { flexDirection: "row", gap: 10 },
   flex: { flex: 1 },
+  tabular: { fontVariant: ["tabular-nums"] },
 });

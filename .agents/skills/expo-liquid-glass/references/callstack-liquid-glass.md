@@ -28,26 +28,27 @@ npx expo install @callstack/liquid-glass
 Drop-in glass panel component. Wrap any content to render it on glass.
 
 ```tsx
-import { LiquidGlassView, isLiquidGlassAvailable } from '@callstack/liquid-glass';
-import { Text, View } from 'react-native';
+import { LiquidGlassView, isLiquidGlassAvailable } from "@callstack/liquid-glass";
+import { Text, View } from "react-native";
 
 function GlassCard() {
   return (
     <LiquidGlassView
       style={[
         { width: 200, height: 100, borderRadius: 20 },
-        !isLiquidGlassAvailable() && { backgroundColor: 'rgba(255,255,255,0.5)' },
+        !isLiquidGlassAvailable() && { backgroundColor: "rgba(255,255,255,0.5)" },
       ]}
       interactive
       effect="clear"
     >
-      <Text style={{ fontWeight: '600', color: 'white' }}>Hello</Text>
+      <Text style={{ fontWeight: "600", color: "white" }}>Hello</Text>
     </LiquidGlassView>
   );
 }
 ```
 
 **Props:**
+
 - `interactive` (boolean): Touch-response animations (scale, bounce, shimmer)
 - `effect`: `'clear'` (high transparency) | `'regular'` (medium transparency)
 - `tintColor` (ColorValue): Overlay tint
@@ -59,7 +60,7 @@ function GlassCard() {
 Groups glass elements for morphing/merging when close together.
 
 ```tsx
-import { LiquidGlassContainerView, LiquidGlassView } from '@callstack/liquid-glass';
+import { LiquidGlassContainerView, LiquidGlassView } from "@callstack/liquid-glass";
 
 function MergingExample() {
   return (
@@ -76,12 +77,13 @@ function MergingExample() {
 ```
 
 **Props:**
+
 - `spacing`: Distance (points) at which glass elements begin merging
 
 ## Platform Detection
 
 ```tsx
-import { isLiquidGlassAvailable } from '@callstack/liquid-glass';
+import { isLiquidGlassAvailable } from "@callstack/liquid-glass";
 
 if (isLiquidGlassAvailable()) {
   // Use LiquidGlassView

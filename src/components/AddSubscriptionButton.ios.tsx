@@ -1,4 +1,5 @@
-import { Button, Host } from "@expo/ui/swift-ui";
+import { Host } from "@expo/ui";
+import { Button } from "@expo/ui/swift-ui";
 import {
   accessibilityLabel,
   buttonBorderShape,

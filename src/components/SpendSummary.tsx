@@ -22,16 +22,16 @@ export function SpendSummary({
     <View style={[styles.card, elevation, { backgroundColor: colors.primary }]}>
       <View style={[styles.glow, { backgroundColor: colors.onPrimary, pointerEvents: "none" }]} />
       <Text style={[styles.eyebrow, { color: colors.onPrimary }]}>MONTHLY SPENDING</Text>
-      <Text style={[styles.total, { color: colors.onPrimary }]}>
+      <Text selectable style={[styles.total, styles.tabular, { color: colors.onPrimary }]}>
         {primary ? formatCurrency(primary.monthly, primary.currency) : "—"}
       </Text>
-      <Text style={[styles.yearly, { color: colors.onPrimary }]}>
+      <Text selectable style={[styles.yearly, styles.tabular, { color: colors.onPrimary }]}>
         {primary
           ? `≈ ${formatCurrency(primary.yearly, primary.currency)} per year`
           : "No active spending"}
       </Text>
       {additional.length ? (
-        <Text style={[styles.additional, { color: colors.onPrimary }]}>
+        <Text selectable style={[styles.additional, styles.tabular, { color: colors.onPrimary }]}>
           Plus{" "}
           {additional.map((total) => formatCurrency(total.monthly, total.currency)).join(" · ")}{" "}
           monthly
@@ -48,7 +48,9 @@ export function SpendSummary({
 function Stat({ value, label, color }: { value: number; label: string; color: string }) {
   return (
     <View>
-      <Text style={[styles.statValue, { color }]}>{value}</Text>
+      <Text selectable style={[styles.statValue, styles.tabular, { color }]}>
+        {value}
+      </Text>
       <Text style={[styles.statLabel, { color }]}>{label}</Text>
     </View>
   );
@@ -72,4 +74,5 @@ const styles = StyleSheet.create({
   stats: { flexDirection: "row", gap: 48, marginTop: 22, paddingTop: 16, borderTopWidth: 1 },
   statValue: { fontSize: 20, fontWeight: "800" },
   statLabel: { fontSize: 12, opacity: 0.72, marginTop: 2 },
+  tabular: { fontVariant: ["tabular-nums"] },
 });

@@ -51,14 +51,15 @@ If a proposed style conflicts with HIG intent, prefer the HIG-consistent option.
 
 ## 3) Choose the Primary Path
 
-| Path | Use It For | Tradeoffs |
-|---|---|---|
-| `expo-glass-effect` | Most RN screens that need glass chips, floating buttons, toolbars, grouped controls | Best default in Expo; must guard runtime availability |
-| `@expo/ui` (`Host` + SwiftUI modifiers) | Native SwiftUI composition, advanced glass transitions, coordinated IDs/namespaces | iOS-family only, dev-build workflow, SwiftUI mental model |
-| `expo-router/unstable-native-tabs` | System-native Liquid Glass tab bars and iOS 26 nav behavior | Unstable API; syntax differs between SDK 54 and 55 |
-| `@callstack/liquid-glass` | Non-Expo RN or teams standardizing on Callstack package | iOS/tvOS focus; also requires fallbacks and runtime checks |
+| Path                                    | Use It For                                                                          | Tradeoffs                                                  |
+| --------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `expo-glass-effect`                     | Most RN screens that need glass chips, floating buttons, toolbars, grouped controls | Best default in Expo; must guard runtime availability      |
+| `@expo/ui` (`Host` + SwiftUI modifiers) | Native SwiftUI composition, advanced glass transitions, coordinated IDs/namespaces  | iOS-family only, dev-build workflow, SwiftUI mental model  |
+| `expo-router/unstable-native-tabs`      | System-native Liquid Glass tab bars and iOS 26 nav behavior                         | Unstable API; syntax differs between SDK 54 and 55         |
+| `@callstack/liquid-glass`               | Non-Expo RN or teams standardizing on Callstack package                             | iOS/tvOS focus; also requires fallbacks and runtime checks |
 
 Combine paths when appropriate:
+
 - Use native tabs for navigation chrome.
 - Use `expo-glass-effect` for floating controls inside screens.
 - Use `@expo/ui` only where SwiftUI-specific behavior is required.
@@ -80,9 +81,9 @@ Apply these rules before implementing visuals:
 ### Pattern A: Guarded Adaptive Glass Wrapper
 
 ```tsx
-import { Platform, View } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { GlassView, isGlassEffectAPIAvailable } from 'expo-glass-effect';
+import { Platform, View } from "react-native";
+import { BlurView } from "expo-blur";
+import { GlassView, isGlassEffectAPIAvailable } from "expo-glass-effect";
 
 export function AdaptiveGlass({ style, children }) {
   if (isGlassEffectAPIAvailable()) {
@@ -93,7 +94,7 @@ export function AdaptiveGlass({ style, children }) {
     );
   }
 
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === "ios") {
     return (
       <BlurView style={style} intensity={40} tint="dark">
         {children}
@@ -101,7 +102,7 @@ export function AdaptiveGlass({ style, children }) {
     );
   }
 
-  return <View style={[style, { backgroundColor: 'rgba(60,60,67,0.30)' }]}>{children}</View>;
+  return <View style={[style, { backgroundColor: "rgba(60,60,67,0.30)" }]}>{children}</View>;
 }
 ```
 
@@ -120,7 +121,7 @@ SDK 55+ compound API:
 ```tsx
 <NativeTabs.Trigger name="index">
   <NativeTabs.Trigger.TabBarIcon
-    ios={{ default: 'house', selected: 'house.fill' }}
+    ios={{ default: "house", selected: "house.fill" }}
     androidIconName="home"
   />
   <NativeTabs.Trigger.TabBarLabel>Home</NativeTabs.Trigger.TabBarLabel>
@@ -144,17 +145,17 @@ Mitigate by setting a background color via `ThemeProvider` (see native-tabs refe
 Use `@expo/ui` when coordinated glass transitions are needed:
 
 ```tsx
-import { Host, Namespace, Text } from '@expo/ui/swift-ui';
-import { glassEffect, glassEffectID, padding } from '@expo/ui/swift-ui/modifiers';
+import { Host, Namespace, Text } from "@expo/ui/swift-ui";
+import { glassEffect, glassEffectID, padding } from "@expo/ui/swift-ui/modifiers";
 
-const ns = new Namespace('glass');
+const ns = new Namespace("glass");
 
 <Host style={{ width: 220, height: 56 }}>
   <Text
     modifiers={[
       padding({ all: 16 }),
-      glassEffect({ glass: { variant: 'regular' } }),
-      glassEffectID({ id: 'primary-chip', in: ns }),
+      glassEffect({ glass: { variant: "regular" } }),
+      glassEffectID({ id: "primary-chip", in: ns }),
     ]}
   >
     Explore

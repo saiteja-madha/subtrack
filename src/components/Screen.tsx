@@ -1,7 +1,6 @@
 import React from "react";
 import {
   KeyboardAvoidingView,
-  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -22,6 +21,7 @@ interface ScreenProps {
   onRefresh?: () => void;
   keyboardShouldPersistTaps?: "always" | "never" | "handled";
   header?: React.ReactNode;
+  nativeFormSheet?: boolean;
 }
 
 export function Screen({
@@ -33,33 +33,42 @@ export function Screen({
   onRefresh,
   keyboardShouldPersistTaps = "handled",
   header,
+  nativeFormSheet = false,
 }: ScreenProps) {
-  const { colors } = useAppTheme();
-  const background = { backgroundColor: colors.background };
+  const { colors, dark } = useAppTheme();
+  const useNativeFormSurface = nativeFormSheet && process.env.EXPO_OS === "ios";
+  const background = {
+    backgroundColor: useNativeFormSurface ? (dark ? "#1C1C1E" : "#F2F2F7") : colors.background,
+  };
   return (
     <SafeAreaView collapsable={false} edges={["top"]} style={[styles.safe, background, style]}>
-      <View
-        style={[
-          styles.orb,
-          styles.orbTop,
-          { backgroundColor: colors.primarySoft, pointerEvents: "none" },
-        ]}
-      />
-      <View
-        style={[
-          styles.orb,
-          styles.orbBottom,
-          { backgroundColor: colors.backgroundAlt, pointerEvents: "none" },
-        ]}
-      />
+      {!useNativeFormSurface ? (
+        <>
+          <View
+            style={[
+              styles.orb,
+              styles.orbTop,
+              { backgroundColor: colors.primarySoft, pointerEvents: "none" },
+            ]}
+          />
+          <View
+            style={[
+              styles.orb,
+              styles.orbBottom,
+              { backgroundColor: colors.backgroundAlt, pointerEvents: "none" },
+            ]}
+          />
+        </>
+      ) : null}
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={process.env.EXPO_OS === "ios" ? "padding" : undefined}
       >
         {header}
         {scroll ? (
           <ScrollView
             style={styles.flex}
+            contentInsetAdjustmentBehavior="automatic"
             contentContainerStyle={[styles.grow, contentContainerStyle]}
             keyboardShouldPersistTaps={keyboardShouldPersistTaps}
             keyboardDismissMode="on-drag"

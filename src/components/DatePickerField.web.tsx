@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppTextInput, FieldError, FieldLabel } from "@/components/ui";
 import { formatISO } from "date-fns";
 export function DatePickerField({
@@ -10,6 +10,7 @@ export function DatePickerField({
   minimumDate,
   maximumDate,
   errorMessage,
+  onClear,
 }: {
   label: string;
   value: Date;
@@ -18,11 +19,19 @@ export function DatePickerField({
   minimumDate?: Date;
   maximumDate?: Date;
   errorMessage?: string;
+  onClear?: () => void;
 }) {
   const iso = formatISO(value, { representation: "date" });
   return (
     <View>
-      <FieldLabel required={isRequired}>{label}</FieldLabel>
+      <View style={styles.labelRow}>
+        <FieldLabel required={isRequired}>{label}</FieldLabel>
+        {onClear ? (
+          <Pressable onPress={onClear} accessibilityRole="button" hitSlop={8}>
+            <Text style={styles.clear}>Clear</Text>
+          </Pressable>
+        ) : null}
+      </View>
       <AppTextInput
         value={iso}
         aria-label={label} // @ts-expect-error React Native Web forwards these native input attributes
@@ -39,4 +48,8 @@ export function DatePickerField({
     </View>
   );
 }
-const styles = StyleSheet.create({ input: { minWidth: 180 } });
+const styles = StyleSheet.create({
+  labelRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  clear: { fontSize: 14, fontWeight: "700", paddingBottom: 8 },
+  input: { minWidth: 180 },
+});

@@ -1,8 +1,8 @@
+import DateTimePicker from "@expo/ui/community/datetime-picker";
 import React, { useState } from "react";
-import { Modal, Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import { AppButton, FieldError, FieldLabel, GlassSurface } from "@/components/ui";
-import { Icon } from "@/components/Icon";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+
+import { FieldError, FieldLabel } from "@/components/ui";
 import { useAppTheme } from "@/theme";
 import { formatFullDate } from "@/utils/dates";
 export function DatePickerField({
@@ -13,6 +13,7 @@ export function DatePickerField({
   minimumDate,
   maximumDate,
   errorMessage,
+  onClear,
 }: {
   label: string;
   value: Date;
@@ -21,86 +22,73 @@ export function DatePickerField({
   minimumDate?: Date;
   maximumDate?: Date;
   errorMessage?: string;
+  onClear?: () => void;
 }) {
   const { colors } = useAppTheme();
-  const [show, setShow] = useState(false);
-  const open = () => {
-    if (Platform.OS === "android")
-      DateTimePickerAndroid.open({
-        value,
-        mode: "date",
-        minimumDate,
-        maximumDate,
-        onChange: (_e, d) => d && onChange(d),
-      });
-    else setShow(true);
-  };
+  const [open, setOpen] = useState(false);
   return (
     <View>
-      <FieldLabel required={isRequired}>{label}</FieldLabel>
+      <View style={styles.labelRow}>
+        <FieldLabel required={isRequired}>{label}</FieldLabel>
+        {onClear ? (
+          <Pressable
+            onPress={onClear}
+            accessibilityRole="button"
+            accessibilityLabel={`Clear ${label}`}
+            hitSlop={8}
+          >
+            <Text style={[styles.clear, { color: colors.primary }]}>Clear</Text>
+          </Pressable>
+        ) : null}
+      </View>
       <Pressable
-        onPress={open}
+        onPress={() => setOpen(true)}
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityValue={{ text: formatFullDate(value) }}
         accessibilityHint={errorMessage}
         style={({ pressed }) => [
-          styles.trigger,
+          styles.picker,
           {
-            backgroundColor: colors.surface,
             borderColor: colors.divider,
+            backgroundColor: colors.surface,
             opacity: pressed ? 0.7 : 1,
           },
         ]}
       >
-        <Text style={[styles.value, { color: colors.text }]}>{formatFullDate(value)}</Text>
-        <Icon name="calendar-outline" size={20} color={colors.primary} />
+        <Text selectable style={[styles.value, { color: colors.text }]}>
+          {formatFullDate(value)}
+        </Text>
       </Pressable>
-      {Platform.OS === "ios" && show ? (
-        <Modal transparent animationType="fade" onRequestClose={() => setShow(false)}>
-          <Pressable style={styles.backdrop} onPress={() => setShow(false)}>
-            <Pressable style={styles.sheetWrap} onPress={() => {}} accessibilityViewIsModal>
-              <GlassSurface style={styles.sheet}>
-                <View style={styles.header}>
-                  <Text style={[styles.title, { color: colors.text }]}>{label}</Text>
-                  <AppButton compact label="Done" onPress={() => setShow(false)} />
-                </View>
-                <DateTimePicker
-                  value={value}
-                  mode="date"
-                  display="spinner"
-                  minimumDate={minimumDate}
-                  maximumDate={maximumDate}
-                  onChange={(_e, d) => d && onChange(d)}
-                />
-              </GlassSurface>
-            </Pressable>
-          </Pressable>
-        </Modal>
+      {open ? (
+        <DateTimePicker
+          value={value}
+          mode="date"
+          presentation="dialog"
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+          accentColor={colors.primary}
+          onValueChange={(_event, date) => {
+            onChange(date);
+            setOpen(false);
+          }}
+          onDismiss={() => setOpen(false)}
+        />
       ) : null}
       <FieldError>{errorMessage}</FieldError>
     </View>
   );
 }
 const styles = StyleSheet.create({
-  trigger: {
+  labelRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  clear: { fontSize: 14, fontWeight: "700", paddingBottom: 8 },
+  picker: {
     minHeight: 50,
     borderWidth: 1,
     borderRadius: 14,
     paddingHorizontal: 14,
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
-  value: { fontSize: 16 },
-  backdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(2,6,18,.5)" },
-  sheetWrap: { padding: 12 },
-  sheet: { padding: 18 },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  title: { fontSize: 19, fontWeight: "800" },
+  value: { alignSelf: "flex-start", fontSize: 16 },
 });

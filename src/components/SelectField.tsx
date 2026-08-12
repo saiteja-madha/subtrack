@@ -1,8 +1,9 @@
+import { Icon, type IconName } from "@/components/Icon";
+import { Divider, FieldError, FieldLabel, GlassSurface } from "@/components/ui";
+import { useAppTheme } from "@/theme";
+import { MenuView } from "@expo/ui/community/menu";
 import React, { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Divider, FieldError, FieldLabel, GlassSurface } from "@/components/ui";
-import { Icon, type IconName } from "@/components/Icon";
-import { useAppTheme } from "@/theme";
 
 export interface SelectFieldOption {
   value: string;
@@ -19,6 +20,7 @@ interface SelectFieldProps {
   noneLabel?: string;
   isRequired?: boolean;
   errorMessage?: string;
+  variant?: "field" | "settings";
 }
 
 export function SelectField({
@@ -30,6 +32,7 @@ export function SelectField({
   noneLabel,
   isRequired,
   errorMessage,
+  variant = "field",
 }: SelectFieldProps) {
   const [open, setOpen] = useState(false);
   const { colors } = useAppTheme();
@@ -37,33 +40,69 @@ export function SelectField({
   const all = noneLabel
     ? [{ value: "__none__", label: noneLabel } as SelectFieldOption, ...options]
     : options;
-  return (
-    <View>
-      <FieldLabel required={isRequired}>{label}</FieldLabel>
-      <Pressable
-        onPress={() => setOpen(true)}
+  const selectedLabel = selected?.label ?? (value === null && noneLabel ? noneLabel : placeholder);
+  const trigger =
+    variant === "settings" ? (
+      <View
+        style={styles.settingsTrigger}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityValue={{ text: selectedLabel }}
+        accessibilityHint={errorMessage}
+      >
+        <Text style={[styles.settingsLabel, { color: colors.text }]}>{label}</Text>
+        <View style={styles.settingsValueWrap}>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.settingsValue,
+              { color: selected ? colors.textSecondary : colors.textMuted },
+            ]}
+          >
+            {selectedLabel}
+          </Text>
+          <Icon name="chevron-forward" size={16} color={colors.textMuted} />
+        </View>
+      </View>
+    ) : (
+      <View
+        style={[styles.trigger, { backgroundColor: colors.surface, borderColor: colors.divider }]}
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityValue={{
-          text: selected?.label ?? (value === null && noneLabel ? noneLabel : placeholder),
+          text: selectedLabel,
         }}
-        accessibilityState={{ expanded: open }}
         accessibilityHint={errorMessage}
-        style={({ pressed }) => [
-          styles.trigger,
-          {
-            backgroundColor: colors.surface,
-            borderColor: colors.divider,
-            opacity: pressed ? 0.72 : 1,
-          },
-        ]}
       >
         <Text style={[styles.triggerText, { color: selected ? colors.text : colors.textMuted }]}>
-          {selected?.label ?? (value === null && noneLabel ? noneLabel : placeholder)}
+          {selectedLabel}
         </Text>
         <Icon name="chevron-down" size={18} color={colors.textMuted} />
-      </Pressable>
-      <FieldError>{errorMessage}</FieldError>
+      </View>
+    );
+  return (
+    <View>
+      {variant === "field" ? <FieldLabel required={isRequired}>{label}</FieldLabel> : null}
+      {process.env.EXPO_OS === "web" ? (
+        <Pressable onPress={() => setOpen(true)} accessibilityState={{ expanded: open }}>
+          {trigger}
+        </Pressable>
+      ) : (
+        <MenuView
+          title={label}
+          actions={all.map((option) => ({
+            id: option.value,
+            title: option.label,
+            state: (option.value === "__none__" ? null : option.value) === value ? "on" : "off",
+          }))}
+          onPressAction={({ nativeEvent }) => {
+            onChange(nativeEvent.event === "__none__" ? null : nativeEvent.event);
+          }}
+        >
+          {trigger}
+        </MenuView>
+      )}
+      {variant === "field" ? <FieldError>{errorMessage}</FieldError> : null}
       <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
           <Pressable style={styles.sheetWrap} onPress={() => {}} accessibilityViewIsModal>
@@ -128,6 +167,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   triggerText: { fontSize: 16 },
+  settingsTrigger: {
+    minHeight: 52,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 16,
+  },
+  settingsLabel: { flex: 1, fontSize: 16 },
+  settingsValueWrap: { flexDirection: "row", alignItems: "center", gap: 6, maxWidth: "62%" },
+  settingsValue: { flexShrink: 1, fontSize: 16, textAlign: "right" },
   backdrop: { flex: 1, backgroundColor: "rgba(2,6,18,.5)", justifyContent: "flex-end" },
   sheetWrap: { width: "100%", maxWidth: 640, alignSelf: "center", padding: 12 },
   sheet: { padding: 18, maxHeight: "75%" },

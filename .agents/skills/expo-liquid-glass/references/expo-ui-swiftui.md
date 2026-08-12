@@ -3,6 +3,7 @@
 Full guide for using SwiftUI components with Liquid Glass in Expo apps.
 
 ## Table of Contents
+
 - [Setup](#setup)
 - [Host Component](#host-component)
 - [Available Components](#available-components)
@@ -18,6 +19,7 @@ npx expo install @expo/ui
 ```
 
 Requirements:
+
 - SDK 54+
 - Xcode 26+ (for glass modifiers)
 - Development build required (not available in Expo Go)
@@ -31,18 +33,19 @@ Status: **Beta**. API surface can change between SDK releases.
 under the hood. Think of it like `<svg>` in the DOM or `<Canvas>` in react-native-skia.
 
 ```tsx
-import { Host, Button } from '@expo/ui/swift-ui';
+import { Host, Button } from "@expo/ui/swift-ui";
 
 function Example() {
   return (
     <Host style={{ width: 200, height: 50 }}>
-      <Button onPress={() => console.log('tap')}>Action</Button>
+      <Button onPress={() => console.log("tap")}>Action</Button>
     </Host>
   );
 }
 ```
 
 **Host props:**
+
 - `style`: Standard React Native styles (flex, dimensions, positioning)
 - `matchContents`: Boolean - sizes Host to fit child SwiftUI content
 
@@ -55,36 +58,36 @@ and causes undefined behavior.
 
 Import from `@expo/ui/swift-ui`:
 
-| Component | Key Props | Notes |
-|---|---|---|
-| `Button` | `variant` ("default", "borderless"), `onPress` | |
-| `Text` | children (string) | SwiftUI Text, not RN Text |
-| `HStack` | children | Horizontal layout |
-| `VStack` | children | Vertical layout |
-| `Spacer` | | Flexible space |
-| `Form` | children | iOS settings-style form |
-| `Section` | children | Group within Form |
-| `Image` | | SwiftUI Image |
-| `Toggle` | `checked`, `onValueChange`, `label`, `variant` ("switch", "checkbox") | |
-| `Picker` | `options`, `selectedIndex`, `variant` ("segmented", "wheel", "menu") | |
-| `Slider` | `value`, `onValueChange` | |
-| `TextField` | `defaultValue`, `onChangeText`, `autocorrection` | |
-| `DateTimePicker` | `displayedComponents`, `initialDate`, `variant`, `onDateSelected` | |
-| `ColorPicker` | `label`, `selection`, `onValueChanged` | |
-| `ContextMenu` | Nested `Items`/`Trigger` | |
-| `BottomSheet` | `isOpened`, `onIsOpenedChange` | |
-| `List` | `scrollEnabled`, `editModeEnabled`, etc. | Reorderable, deletable |
-| `CircularProgress` | `progress`, `color` | |
-| `LinearProgress` | `progress`, `color` | |
-| `Gauge` | `min`, `max`, `current`, `color`, `type` | |
+| Component          | Key Props                                                             | Notes                     |
+| ------------------ | --------------------------------------------------------------------- | ------------------------- |
+| `Button`           | `variant` ("default", "borderless"), `onPress`                        |                           |
+| `Text`             | children (string)                                                     | SwiftUI Text, not RN Text |
+| `HStack`           | children                                                              | Horizontal layout         |
+| `VStack`           | children                                                              | Vertical layout           |
+| `Spacer`           |                                                                       | Flexible space            |
+| `Form`             | children                                                              | iOS settings-style form   |
+| `Section`          | children                                                              | Group within Form         |
+| `Image`            |                                                                       | SwiftUI Image             |
+| `Toggle`           | `checked`, `onValueChange`, `label`, `variant` ("switch", "checkbox") |                           |
+| `Picker`           | `options`, `selectedIndex`, `variant` ("segmented", "wheel", "menu")  |                           |
+| `Slider`           | `value`, `onValueChange`                                              |                           |
+| `TextField`        | `defaultValue`, `onChangeText`, `autocorrection`                      |                           |
+| `DateTimePicker`   | `displayedComponents`, `initialDate`, `variant`, `onDateSelected`     |                           |
+| `ColorPicker`      | `label`, `selection`, `onValueChanged`                                |                           |
+| `ContextMenu`      | Nested `Items`/`Trigger`                                              |                           |
+| `BottomSheet`      | `isOpened`, `onIsOpenedChange`                                        |                           |
+| `List`             | `scrollEnabled`, `editModeEnabled`, etc.                              | Reorderable, deletable    |
+| `CircularProgress` | `progress`, `color`                                                   |                           |
+| `LinearProgress`   | `progress`, `color`                                                   |                           |
+| `Gauge`            | `min`, `max`, `current`, `color`, `type`                              |                           |
 
 ## Glass Modifier
 
 Apply liquid glass to any SwiftUI component via the `glassEffect` modifier.
 
 ```tsx
-import { Host, Text, VStack } from '@expo/ui/swift-ui';
-import { glassEffect, padding, frame } from '@expo/ui/swift-ui/modifiers';
+import { Host, Text, VStack } from "@expo/ui/swift-ui";
+import { glassEffect, padding, frame } from "@expo/ui/swift-ui/modifiers";
 
 function GlassCard() {
   return (
@@ -93,7 +96,7 @@ function GlassCard() {
         modifiers={[
           padding({ all: 20 }),
           frame({ maxWidth: 280 }),
-          glassEffect({ glass: { variant: 'regular' } }),
+          glassEffect({ glass: { variant: "regular" } }),
         ]}
       >
         <Text>Glass Surface</Text>
@@ -107,16 +110,16 @@ function GlassCard() {
 
 ```tsx
 // Regular - medium transparency, standard controls
-glassEffect({ glass: { variant: 'regular' } })
+glassEffect({ glass: { variant: "regular" } });
 
 // Clear - high transparency, media-rich backgrounds
-glassEffect({ glass: { variant: 'clear' } })
+glassEffect({ glass: { variant: "clear" } });
 
 // With tint color
-glassEffect({ glass: { variant: 'regular', tint: '#007AFF' } })
+glassEffect({ glass: { variant: "regular", tint: "#007AFF" } });
 
 // Interactive - enables touch animations (scale, bounce, shimmer)
-glassEffect({ glass: { variant: 'regular', interactive: true } })
+glassEffect({ glass: { variant: "regular", interactive: true } });
 ```
 
 ### Coordinated Glass Transitions
@@ -124,16 +127,16 @@ glassEffect({ glass: { variant: 'regular', interactive: true } })
 Use `Namespace` + `glassEffectID` to coordinate glass identity across transitions:
 
 ```tsx
-import { Host, Namespace, Text } from '@expo/ui/swift-ui';
-import { glassEffect, glassEffectID } from '@expo/ui/swift-ui/modifiers';
+import { Host, Namespace, Text } from "@expo/ui/swift-ui";
+import { glassEffect, glassEffectID } from "@expo/ui/swift-ui/modifiers";
 
-const glassNamespace = new Namespace('main');
+const glassNamespace = new Namespace("main");
 
 <Host style={{ width: 220, height: 56 }}>
   <Text
     modifiers={[
-      glassEffect({ glass: { variant: 'regular' } }),
-      glassEffectID({ id: 'search-chip', in: glassNamespace }),
+      glassEffect({ glass: { variant: "regular" } }),
+      glassEffectID({ id: "search-chip", in: glassNamespace }),
     ]}
   >
     Search
@@ -146,9 +149,9 @@ const glassNamespace = new Namespace('main');
 Combine `expo-mesh-gradient` with `glassEffect` for liquid glass text:
 
 ```tsx
-import { Host, Text } from '@expo/ui/swift-ui';
-import { glassEffect, padding } from '@expo/ui/swift-ui/modifiers';
-import { MeshGradient } from 'expo-mesh-gradient';
+import { Host, Text } from "@expo/ui/swift-ui";
+import { glassEffect, padding } from "@expo/ui/swift-ui/modifiers";
+import { MeshGradient } from "expo-mesh-gradient";
 
 function GlassTitle() {
   return (
@@ -158,13 +161,8 @@ function GlassTitle() {
         points={[/* mesh gradient points */]}
         colors={[/* gradient colors */]}
       />
-      <Host style={{ position: 'absolute', top: 100, alignSelf: 'center' }}>
-        <Text
-          modifiers={[
-            padding({ all: 16 }),
-            glassEffect({ glass: { variant: 'clear' } }),
-          ]}
-        >
+      <Host style={{ position: "absolute", top: 100, alignSelf: "center" }}>
+        <Text modifiers={[padding({ all: 16 }), glassEffect({ glass: { variant: "clear" } })]}>
           Liquid Glass Text
         </Text>
       </Host>
@@ -178,13 +176,15 @@ function GlassTitle() {
 SwiftUI layout inside Host uses stacks, not flexbox:
 
 ```tsx
-import { Host, HStack, VStack, Text, Spacer } from '@expo/ui/swift-ui';
-import { padding, glassEffect } from '@expo/ui/swift-ui/modifiers';
+import { Host, HStack, VStack, Text, Spacer } from "@expo/ui/swift-ui";
+import { padding, glassEffect } from "@expo/ui/swift-ui/modifiers";
 
 function GlassToolbar() {
   return (
-    <Host style={{ width: '100%', height: 60 }}>
-      <HStack modifiers={[padding({ horizontal: 16 }), glassEffect({ glass: { variant: 'regular' } })]}>
+    <Host style={{ width: "100%", height: 60 }}>
+      <HStack
+        modifiers={[padding({ horizontal: 16 }), glassEffect({ glass: { variant: "regular" } })]}
+      >
         <Text>Left</Text>
         <Spacer />
         <Text>Right</Text>
@@ -226,12 +226,12 @@ React Native components can be nested as JSX children within Host:
 ### Conditional Glass
 
 ```tsx
-import { isGlassEffectAPIAvailable } from 'expo-glass-effect';
+import { isGlassEffectAPIAvailable } from "expo-glass-effect";
 
 function AdaptiveCard() {
   const mods = [padding({ all: 16 })];
   if (isGlassEffectAPIAvailable()) {
-    mods.push(glassEffect({ glass: { variant: 'regular' } }));
+    mods.push(glassEffect({ glass: { variant: "regular" } }));
   }
 
   return (

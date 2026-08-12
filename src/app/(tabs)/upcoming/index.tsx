@@ -19,7 +19,7 @@ import { useAppTheme } from "@/theme";
 const ORDER: UpcomingGroupKey[] = ["today", "tomorrow", "week", "month", "later"];
 export default function UpcomingScreen() {
   const router = useRouter();
-  const { status, error, subscriptions, categories, refresh } = useData();
+  const { status, error, subscriptions, categories, refresh, retry } = useData();
   const { isRefreshing, onRefresh } = usePullToRefresh(refresh);
   const { colors } = useAppTheme();
   const map = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
@@ -35,7 +35,7 @@ export default function UpcomingScreen() {
   if (status === "error") {
     return (
       <Screen scroll={false} header={<TabHeader title="Upcoming" />}>
-        <DataErrorState message={error} />
+        <DataErrorState message={error} onRetry={() => void retry()} />
       </Screen>
     );
   }

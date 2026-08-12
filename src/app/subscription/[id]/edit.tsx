@@ -27,14 +27,14 @@ export default function EditSubscriptionScreen() {
 
   if (status === "loading") {
     return (
-      <Screen scroll={false} header={<ScreenHeader title="Edit subscription" showBack />}>
+      <Screen nativeFormSheet scroll={false} header={<ScreenHeader title="Edit subscription" />}>
         <LoadingState />
       </Screen>
     );
   }
   if (status === "error") {
     return (
-      <Screen scroll={false} header={<ScreenHeader title="Edit subscription" showBack />}>
+      <Screen nativeFormSheet scroll={false} header={<ScreenHeader title="Edit subscription" />}>
         <DataErrorState message={error} />
       </Screen>
     );
@@ -42,7 +42,7 @@ export default function EditSubscriptionScreen() {
 
   if (!subscription) {
     return (
-      <Screen header={<ScreenHeader title="Edit subscription" showBack />}>
+      <Screen nativeFormSheet header={<ScreenHeader title="Edit subscription" />}>
         <View style={styles.center}>
           <EmptyState
             icon="alert-circle-outline"
@@ -65,7 +65,11 @@ export default function EditSubscriptionScreen() {
   };
 
   return (
-    <Screen header={<ScreenHeader title="Edit subscription" showBack />}>
+    <Screen
+      nativeFormSheet
+      scroll={process.env.EXPO_OS !== "ios"}
+      header={<ScreenHeader title="Edit subscription" />}
+    >
       <SubscriptionForm
         initial={initial}
         defaultCurrency={settings.currency}

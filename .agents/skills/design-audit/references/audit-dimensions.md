@@ -5,9 +5,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 1. Visual Hierarchy
+
 **Definition:** The arrangement of elements that guides the eye in order of importance.
 
 **What to look for:**
+
 - Is there a single, unmissable primary action per screen?
 - Do headings, body text, and secondary elements have clear size/weight differentiation?
 - Does the eye flow naturally top-to-bottom, left-to-right (or per locale)?
@@ -19,9 +21,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 2. Spacing & Rhythm
+
 **Definition:** The consistent use of space between and around elements to create visual rhythm.
 
 **What to look for:**
+
 - Are gaps between related items smaller than gaps between unrelated items?
 - Is the spacing scale consistent (e.g., 4/8/12/16/24/32/48)?
 - Do sections have clear visual separation?
@@ -33,9 +37,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 3. Typography
+
 **Definition:** The use of typefaces, sizes, weights, and line heights to communicate hierarchy and ensure readability.
 
 **What to look for:**
+
 - Is the type scale limited (3-5 distinct sizes)?
 - Are font weights used to signal hierarchy, not decoration?
 - Are line heights comfortable for reading (1.4-1.6 for body)?
@@ -47,9 +53,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 4. Color
+
 **Definition:** The intentional use of color to communicate meaning, state, and hierarchy.
 
 **What to look for:**
+
 - Is the palette limited and consistent (1 primary, 1-2 accents, neutrals)?
 - Do colors have semantic meaning (success, error, warning, info)?
 - Are contrast ratios WCAG AA compliant (4.5:1 text, 3:1 large text)?
@@ -61,9 +69,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 5. Alignment & Grid
+
 **Definition:** The placement of elements on a consistent spatial grid.
 
 **What to look for:**
+
 - Do elements align to a grid system?
 - Are left edges consistent across stacked elements?
 - Is optical alignment considered (icons vs. text, rounded vs. square)?
@@ -75,9 +85,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 6. Components
+
 **Definition:** The reuse and consistency of UI components across screens.
 
 **What to look for:**
+
 - Is the same component used for the same purpose everywhere?
 - Do components have consistent APIs (props, variants, sizes)?
 - Are there one-off components that should be standardized?
@@ -89,9 +101,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 7. Iconography
+
 **Definition:** The style, sizing, and usage of icons throughout the app.
 
 **What to look for:**
+
 - Are all icons from the same family/style (outline, filled, duo-tone)?
 - Are icon sizes consistent (typically 20/24px)?
 - Do icons have sufficient touch targets (44x44pt minimum)?
@@ -103,9 +117,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 8. Motion & Transitions
+
 **Definition:** The purposeful use of animation to communicate state changes and spatial relationships.
 
 **What to look for:**
+
 - Do transitions communicate spatial relationships (where things come from/go)?
 - Are durations appropriate (150-300ms for micro, 300-500ms for page)?
 - Is easing natural (ease-out for entrances, ease-in for exits)?
@@ -117,9 +133,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 9. Empty States
+
 **Definition:** What the user sees when there is no data to display.
 
 **What to look for:**
+
 - Is there a clear message explaining why it's empty?
 - Is there a call-to-action to resolve the empty state?
 - Does it feel designed, not like an afterthought?
@@ -131,9 +149,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 10. Loading States
+
 **Definition:** What the user sees while data is being fetched or processed.
 
 **What to look for:**
+
 - Are skeleton screens used instead of spinners where possible?
 - Is loading progressive (showing content as it arrives)?
 - Does the loading state match the layout of the loaded state?
@@ -145,9 +165,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 11. Error States
+
 **Definition:** What the user sees when something goes wrong.
 
 **What to look for:**
+
 - Is the error message clear and human-readable (not a stack trace)?
 - Is there a recovery path (retry, go back, contact support)?
 - Does the tone match the app's voice (calm, helpful, not alarming)?
@@ -159,9 +181,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 12. Dark Mode / Theming
+
 **Definition:** The adaptation of the UI for dark mode and other theme variants.
 
 **What to look for:**
+
 - Are colors mapped semantically (not just inverted)?
 - Do elevated surfaces get lighter in dark mode (elevation = brightness)?
 - Are shadows replaced with borders or subtle brightness shifts?
@@ -173,9 +197,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 13. Density
+
 **Definition:** The amount of information presented per viewport.
 
 **What to look for:**
+
 - Is the information density appropriate for the use case (dashboard vs. reader)?
 - Are touch targets at least 44x44pt?
 - Is there a clear visual hierarchy even in dense views?
@@ -187,9 +213,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 14. Responsiveness
+
 **Definition:** How the UI adapts across viewport sizes and orientations.
 
 **What to look for:**
+
 - Is mobile the starting point (mobile-first)?
 - Do breakpoints make sense for the content (not arbitrary)?
 - Does content reflow naturally (no horizontal scroll)?
@@ -201,9 +229,11 @@ Detailed scoring criteria for each of the 15 audit dimensions. For every screen,
 ---
 
 ## 15. Accessibility
+
 **Definition:** The usability of the app for users with disabilities.
 
 **What to look for:**
+
 - Are contrast ratios WCAG AA compliant?
 - Do interactive elements have accessible labels?
 - Is focus order logical and complete?

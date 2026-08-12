@@ -1,14 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import type { ComponentProps } from "react";
-import type { ColorValue } from "react-native";
+import type { IconName, IconProps } from "@/components/Icon.types";
 
-export type IconName = ComponentProps<typeof Ionicons>["name"];
-
-export interface IconProps {
-  name: IconName;
-  size?: number;
-  color?: ColorValue;
-}
+export type { IconName, IconProps } from "@/components/Icon.types";
 
 export function Icon({ name, size = 20, color }: IconProps) {
   return <Ionicons name={name} size={size} color={color} />;

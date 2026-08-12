@@ -3,6 +3,7 @@
 Expo Router v6 native tabs that automatically render with iOS 26 liquid glass.
 
 ## Table of Contents
+
 - [Setup](#setup)
 - [Basic Usage](#basic-usage)
 - [Tab Bar Items](#tab-bar-items)
@@ -23,6 +24,7 @@ npx expo install expo-router@next
 ```
 
 File structure:
+
 ```
 app/
   _layout.tsx        # NativeTabs layout
@@ -35,14 +37,14 @@ app/
 ## Basic Usage
 
 ```tsx
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function TabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.TabBarIcon
-          ios={{ default: 'house', selected: 'house.fill' }}
+          ios={{ default: "house", selected: "house.fill" }}
           androidIconName="home"
         />
         <NativeTabs.Trigger.TabBarLabel>Home</NativeTabs.Trigger.TabBarLabel>
@@ -50,7 +52,7 @@ export default function TabLayout() {
 
       <NativeTabs.Trigger name="search">
         <NativeTabs.Trigger.TabBarIcon
-          ios={{ default: 'magnifyingglass', selected: 'magnifyingglass' }}
+          ios={{ default: "magnifyingglass", selected: "magnifyingglass" }}
           androidIconName="search"
         />
         <NativeTabs.Trigger.TabBarLabel>Search</NativeTabs.Trigger.TabBarLabel>
@@ -58,7 +60,7 @@ export default function TabLayout() {
 
       <NativeTabs.Trigger name="account">
         <NativeTabs.Trigger.TabBarIcon
-          ios={{ default: 'person', selected: 'person.fill' }}
+          ios={{ default: "person", selected: "person.fill" }}
           androidIconName="person"
         />
         <NativeTabs.Trigger.TabBarLabel>Account</NativeTabs.Trigger.TabBarLabel>
@@ -117,6 +119,7 @@ On iOS 26, the tab bar automatically uses liquid glass material.
 ```
 
 Legacy aliases on SDK 54:
+
 - `Trigger.Icon`
 - `Trigger.Label`
 - `Trigger.Badge`
@@ -170,7 +173,7 @@ import { DynamicColorIOS } from 'react-native';
 <NativeTabs.Trigger name="search" role="search">
   <NativeTabs.Trigger.TabBarLabel>Search</NativeTabs.Trigger.TabBarLabel>
   <NativeTabs.Trigger.TabBarIcon
-    ios={{ default: 'magnifyingglass', selected: 'magnifyingglass' }}
+    ios={{ default: "magnifyingglass", selected: "magnifyingglass" }}
     androidIconName="search"
   />
 </NativeTabs.Trigger>
@@ -182,7 +185,7 @@ Wrap tab content in a Stack navigator with search bar options:
 
 ```tsx
 // app/(tabs)/search/_layout.tsx
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
 
 export default function SearchLayout() {
   return (
@@ -191,8 +194,10 @@ export default function SearchLayout() {
         name="index"
         options={{
           headerSearchBarOptions: {
-            placeholder: 'Search...',
-            onChangeText: (e) => { /* handle search */ },
+            placeholder: "Search...",
+            onChangeText: (e) => {
+              /* handle search */
+            },
           },
         }}
       />
@@ -204,9 +209,7 @@ export default function SearchLayout() {
 ### Minimize Tab Bar on Scroll
 
 ```tsx
-<NativeTabs minimizeBehavior="onScrollDown">
-  {/* tabs */}
-</NativeTabs>
+<NativeTabs minimizeBehavior="onScrollDown">{/* tabs */}</NativeTabs>
 ```
 
 ### Bottom Accessory (Mini Player)
@@ -233,18 +236,18 @@ Each tab can have its own Stack navigator for per-screen header configuration:
 
 ```tsx
 // app/(tabs)/home/_layout.tsx
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
 
 export default function HomeLayout() {
   return (
     <Stack
       screenOptions={{
         headerLargeTitle: true,
-        headerBlurEffect: 'systemChromeMaterialDark',
+        headerBlurEffect: "systemChromeMaterialDark",
         headerTransparent: true,
       }}
     >
-      <Stack.Screen name="index" options={{ title: 'Home' }} />
+      <Stack.Screen name="index" options={{ title: "Home" }} />
     </Stack>
   );
 }
@@ -269,7 +272,7 @@ Native tabs render a basic iPad-like tab bar on web. For custom web layouts:
 
 ```tsx
 // app/_layout.web.tsx
-import { Tabs } from 'expo-router/ui';
+import { Tabs } from "expo-router/ui";
 
 export default function WebTabLayout() {
   return <Tabs>{/* custom web tab UI */}</Tabs>;
@@ -284,8 +287,8 @@ Transparent `NativeTabs` can flash white in some stack transitions. Mitigate wit
 `ThemeProvider` background:
 
 ```tsx
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { DarkTheme, ThemeProvider } from "@react-navigation/native";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function Layout() {
   return (

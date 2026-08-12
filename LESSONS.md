@@ -8,3 +8,4 @@
 - Availability checks alone are incomplete. Reduce Transparency must independently force opaque materials even when the OS supports native glass.
 - Browser E2E at a phone viewport is valuable even for a native-first app: it exposed navigation overlap that type checks and native bundles could not reveal.
 - Accessibility roles are part of the component contract. Contextual names such as “Status filter, Paused” make repeated chip controls understandable without visual context.
+- Confirmation sheets must apply insets on the embedded React Native content rather than the native host wrapper, so the sheet presentation retains a reliable internal grid across platforms.

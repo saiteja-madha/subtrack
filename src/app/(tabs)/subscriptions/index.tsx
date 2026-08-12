@@ -1,22 +1,14 @@
 import React, { useMemo, useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { BottomSheet, Button, Column, Picker, Text as NativeText } from "@expo/ui";
 import { useRouter } from "expo-router";
-import { AppTextInput, Divider, SectionLabel, SurfaceCard } from "@/components/ui";
+import { AppTextInput, SurfaceCard } from "@/components/ui";
 import { AddSubscriptionButton } from "@/components/AddSubscriptionButton";
 import { DataErrorState, LoadingState } from "@/components/DataState";
 import { EmptyState } from "@/components/EmptyState";
 import { Icon } from "@/components/Icon";
 import { TabHeader } from "@/components/ScreenHeader";
 import { Screen } from "@/components/Screen";
-import { SegmentChips } from "@/components/SegmentChips";
 import { SubscriptionListItem } from "@/components/SubscriptionListItem";
 import { getNextBillingDate } from "@/domain/billing";
 import type { Subscription, SubscriptionStatus } from "@/domain/types";
@@ -40,7 +32,7 @@ const SORTS = [
 export default function SubscriptionsScreen() {
   const router = useRouter();
   const { colors } = useAppTheme();
-  const { status, error, subscriptions, categories, refresh } = useData();
+  const { status, error, subscriptions, categories, refresh, retry } = useData();
   const { isRefreshing, onRefresh } = usePullToRefresh(refresh);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatus] = useState<StatusFilter>("all");
@@ -78,7 +70,7 @@ export default function SubscriptionsScreen() {
   if (status === "error") {
     return (
       <Screen scroll={false} header={<TabHeader title="Subscriptions" />}>
-        <DataErrorState message={error} />
+        <DataErrorState message={error} onRetry={() => void retry()} />
       </Screen>
     );
   }
@@ -158,50 +150,6 @@ export default function SubscriptionsScreen() {
           ) : null}
         </Pressable>
       </View>
-      {filtersOpen ? (
-        <SurfaceCard style={styles.filterPanel}>
-          <View style={styles.filterGroup}>
-            <SectionLabel>Status</SectionLabel>
-            <SegmentChips
-              options={STATUSES}
-              value={statusFilter}
-              groupLabel="Status filter"
-              onChange={(v) => setStatus((v as StatusFilter) ?? "all")}
-            />
-          </View>
-          <View style={styles.filterGroup}>
-            <SectionLabel>Category</SectionLabel>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.categories}
-            >
-              <CategoryChip
-                label="All categories"
-                selected={!category}
-                onPress={() => setCategory(null)}
-              />
-              {categories.map((c) => (
-                <CategoryChip
-                  key={c.id}
-                  label={c.name}
-                  selected={category === c.id}
-                  onPress={() => setCategory(category === c.id ? null : c.id)}
-                />
-              ))}
-            </ScrollView>
-          </View>
-          <View style={styles.filterGroup}>
-            <SectionLabel>Sort by</SectionLabel>
-            <SegmentChips
-              options={SORTS}
-              value={sort}
-              groupLabel="Sort subscriptions"
-              onChange={(v) => setSort((v as SortKey) ?? "recent")}
-            />
-          </View>
-        </SurfaceCard>
-      ) : null}
     </View>
   );
   return (
@@ -211,75 +159,92 @@ export default function SubscriptionsScreen() {
         subtitle={`${subscriptions.length} subscription${subscriptions.length === 1 ? "" : "s"} tracked`}
         right={<AddSubscriptionButton onPress={() => router.push("/subscription/new")} />}
       />
-      <FlatList
-        data={data}
-        keyExtractor={(i) => i.id}
-        ListHeaderComponent={header}
-        renderItem={({ item }: { item: Subscription }) => (
-          <SurfaceCard style={styles.rowCard}>
-            <SubscriptionListItem
-              subscription={item}
-              category={map.get(item.categoryId ?? "")}
-              onPress={() =>
-                router.push({ pathname: "/subscription/[id]", params: { id: item.id } })
-              }
+      <>
+        <FlatList
+          data={data}
+          keyExtractor={(i) => i.id}
+          ListHeaderComponent={header}
+          renderItem={({ item }: { item: Subscription }) => (
+            <SurfaceCard style={styles.rowCard}>
+              <SubscriptionListItem
+                subscription={item}
+                category={map.get(item.categoryId ?? "")}
+                onPress={() =>
+                  router.push({ pathname: "/subscription/[id]", params: { id: item.id } })
+                }
+              />
+            </SurfaceCard>
+          )}
+          ItemSeparatorComponent={() => <View style={styles.gap} />}
+          ListEmptyComponent={
+            <EmptyState
+              icon="search-outline"
+              title="No subscriptions found"
+              message="Try adjusting your search or filters."
             />
-          </SurfaceCard>
-        )}
-        ItemSeparatorComponent={() => <View style={styles.gap} />}
-        ListEmptyComponent={
-          <EmptyState
-            icon="search-outline"
-            title="No subscriptions found"
-            message="Try adjusting your search or filters."
-          />
-        }
-        contentContainerStyle={styles.list}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
-          />
-        }
-      />
+          }
+          contentInsetAdjustmentBehavior="automatic"
+          contentContainerStyle={styles.list}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.primary}
+            />
+          }
+        />
+        <BottomSheet
+          isPresented={filtersOpen}
+          onDismiss={() => setFiltersOpen(false)}
+          showDragIndicator
+          snapPoints={["half"]}
+        >
+          <Column spacing={18}>
+            <NativeText textStyle={{ fontSize: 20, fontWeight: "700" }}>Filters</NativeText>
+            <Column spacing={8}>
+              <NativeText textStyle={{ fontSize: 14, fontWeight: "700" }}>Status</NativeText>
+              <Picker
+                selectedValue={statusFilter}
+                onValueChange={(value) => setStatus(value as StatusFilter)}
+              >
+                {STATUSES.map((option) => (
+                  <Picker.Item key={option.value} label={option.label} value={option.value} />
+                ))}
+              </Picker>
+            </Column>
+            <Column spacing={8}>
+              <NativeText textStyle={{ fontSize: 14, fontWeight: "700" }}>Category</NativeText>
+              <Picker
+                selectedValue={category ?? "__all__"}
+                onValueChange={(value) => setCategory(value === "__all__" ? null : value)}
+              >
+                <Picker.Item label="All categories" value="__all__" />
+                {categories.map((item) => (
+                  <Picker.Item key={item.id} label={item.name} value={item.id} />
+                ))}
+              </Picker>
+            </Column>
+            <Column spacing={8}>
+              <NativeText textStyle={{ fontSize: 14, fontWeight: "700" }}>Sort by</NativeText>
+              <Picker selectedValue={sort} onValueChange={(value) => setSort(value as SortKey)}>
+                {SORTS.map((option) => (
+                  <Picker.Item key={option.value} label={option.label} value={option.value} />
+                ))}
+              </Picker>
+            </Column>
+            <Button
+              label="Clear filters"
+              variant="text"
+              onPress={() => {
+                setStatus("all");
+                setCategory(null);
+                setSort("recent");
+              }}
+            />
+          </Column>
+        </BottomSheet>
+      </>
     </Screen>
-  );
-}
-function CategoryChip({
-  label,
-  selected,
-  onPress,
-}: {
-  label: string;
-  selected: boolean;
-  onPress: () => void;
-}) {
-  const { colors } = useAppTheme();
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="radio"
-      accessibilityLabel={label}
-      accessibilityState={{ checked: selected }}
-      style={[
-        styles.categoryChip,
-        {
-          backgroundColor: selected ? colors.primarySoft : colors.surfaceMuted,
-          borderColor: selected ? colors.primary : colors.divider,
-        },
-      ]}
-    >
-      <Text
-        style={{
-          color: selected ? colors.primary : colors.textSecondary,
-          fontSize: 13,
-          fontWeight: "600",
-        }}
-      >
-        {label}
-      </Text>
-    </Pressable>
   );
 }
 const styles = StyleSheet.create({
@@ -331,16 +296,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   filterBadgeText: { fontSize: 11, fontWeight: "800" },
-  filterPanel: { padding: 16, gap: 18 },
-  filterGroup: { gap: 8 },
-  categories: { gap: 8 },
-  categoryChip: {
-    paddingHorizontal: 13,
-    minHeight: 44,
-    justifyContent: "center",
-    borderRadius: 999,
-    borderWidth: 1,
-  },
   rowCard: { paddingHorizontal: 1 },
   gap: { height: 10 },
 });

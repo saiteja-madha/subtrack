@@ -1,6 +1,6 @@
-import React from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { AppButton, GlassSurface } from "@/components/ui";
+import { BottomSheet, RNHostView } from "@expo/ui";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+
 import { useAppTheme } from "@/theme";
 export function ConfirmDialog({
   isOpen,
@@ -23,53 +23,91 @@ export function ConfirmDialog({
   isLoading?: boolean;
   onConfirm: () => void;
 }) {
-  const { colors } = useAppTheme();
+  const { colors, dark } = useAppTheme();
   return (
-    <Modal
-      visible={isOpen}
-      transparent
-      animationType="fade"
-      onRequestClose={() => onOpenChange(false)}
+    <BottomSheet
+      isPresented={isOpen}
+      onDismiss={() => onOpenChange(false)}
+      showDragIndicator
+      snapPoints={process.env.EXPO_OS === "android" ? undefined : [{ height: 320 }]}
     >
-      <Pressable style={styles.backdrop} onPress={() => onOpenChange(false)}>
-        <Pressable onPress={() => {}} style={styles.wrap} accessibilityViewIsModal>
-          <GlassSurface style={styles.dialog}>
-            <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-            {message ? (
-              <Text style={[styles.message, { color: colors.textSecondary }]}>{message}</Text>
-            ) : null}
-            <View style={styles.actions}>
-              <AppButton
-                compact
-                tone="secondary"
-                label={cancelLabel}
-                onPress={() => onOpenChange(false)}
-              />
-              <AppButton
-                compact
-                tone={tone === "danger" ? "danger" : "primary"}
-                label={confirmLabel}
-                loading={isLoading}
-                onPress={onConfirm}
-              />
-            </View>
-          </GlassSurface>
-        </Pressable>
-      </Pressable>
-    </Modal>
+      <RNHostView matchContents>
+        <View style={styles.content}>
+          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+          {message ? (
+            <Text selectable style={[styles.message, { color: colors.textSecondary }]}>
+              {message}
+            </Text>
+          ) : null}
+          <View style={styles.actions}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={confirmLabel}
+              disabled={isLoading}
+              onPress={onConfirm}
+              style={({ pressed }) => [
+                styles.confirmAction,
+                {
+                  backgroundColor: tone === "danger" ? colors.danger : colors.primary,
+                  opacity: isLoading ? 0.5 : pressed ? 0.76 : 1,
+                },
+              ]}
+            >
+              {isLoading ? (
+                <ActivityIndicator
+                  color={tone === "danger" && dark ? "#2A0B12" : colors.onPrimary}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.confirmLabel,
+                    { color: tone === "danger" && dark ? "#2A0B12" : colors.onPrimary },
+                  ]}
+                >
+                  {confirmLabel}
+                </Text>
+              )}
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={cancelLabel}
+              onPress={() => onOpenChange(false)}
+              style={({ pressed }) => [
+                styles.cancelAction,
+                {
+                  backgroundColor: colors.surfaceMuted,
+                  borderColor: colors.divider,
+                  opacity: pressed ? 0.72 : 1,
+                },
+              ]}
+            >
+              <Text style={[styles.cancelLabel, { color: colors.text }]}>{cancelLabel}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </RNHostView>
+    </BottomSheet>
   );
 }
+
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(2,6,18,.55)",
+  content: { width: "100%", paddingHorizontal: 28, paddingTop: 12, paddingBottom: 24, gap: 18 },
+  title: { fontSize: 24, lineHeight: 30, fontWeight: "800", letterSpacing: -0.4 },
+  message: { fontSize: 16, lineHeight: 23 },
+  actions: { gap: 4, marginTop: 8 },
+  confirmAction: {
+    minHeight: 54,
+    borderRadius: 27,
     alignItems: "center",
     justifyContent: "center",
-    padding: 24,
   },
-  wrap: { width: "100%", maxWidth: 420 },
-  dialog: { padding: 22 },
-  title: { fontSize: 20, fontWeight: "800" },
-  message: { fontSize: 14, lineHeight: 21, marginTop: 8 },
-  actions: { flexDirection: "row", justifyContent: "flex-end", gap: 8, marginTop: 22 },
+  confirmLabel: { fontSize: 16, fontWeight: "700" },
+  cancelAction: {
+    minHeight: 44,
+    borderRadius: 22,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cancelLabel: { fontSize: 15, fontWeight: "600" },
 });

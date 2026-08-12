@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { DataErrorState, LoadingState } from "@/components/DataState";
 import { Icon, type IconName } from "@/components/Icon";
 import { Screen } from "@/components/Screen";
 import { TabHeader } from "@/components/ScreenHeader";
-import { SegmentChips } from "@/components/SegmentChips";
 import { SelectField } from "@/components/SelectField";
 import { Divider, SectionLabel, SurfaceCard } from "@/components/ui";
 import { CURRENCIES } from "@/constants/currencies";
-import { DEFAULT_REMINDER_OPTIONS } from "@/constants/reminders";
 import { APP_NAME, type AppSettings } from "@/domain/types";
 import { useData } from "@/hooks/useData";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
@@ -68,6 +66,7 @@ export default function SettingsScreen() {
     resetAllData,
     seedDemo,
     refresh,
+    retry,
   } = useData();
   const { isRefreshing, onRefresh } = usePullToRefresh(refresh);
   const [busy, setBusy] = useState<string | null>(null);
@@ -82,7 +81,7 @@ export default function SettingsScreen() {
   if (status === "error") {
     return (
       <Screen scroll={false} header={<TabHeader title="Settings" />}>
-        <DataErrorState message={error} />
+        <DataErrorState message={error} onRetry={() => void retry()} />
       </Screen>
     );
   }
@@ -124,42 +123,37 @@ export default function SettingsScreen() {
       <View style={styles.content}>
         <View style={styles.section}>
           <SectionLabel>Preferences</SectionLabel>
-          <SurfaceCard style={styles.card}>
-            <View>
-              <Text style={[styles.fieldTitle, { color: colors.text }]}>Appearance</Text>
-              <SegmentChips
-                options={APPEARANCE}
-                value={settings.appearance}
-                groupLabel="Appearance"
-                onChange={(v) =>
-                  void updateSettings({ appearance: (v as AppSettings["appearance"]) ?? "system" })
-                }
-              />
-            </View>
-            <Divider />
+          <SurfaceCard style={styles.settingsCard}>
             <SelectField
+              variant="settings"
+              options={APPEARANCE}
+              value={settings.appearance}
+              label="Appearance"
+              onChange={(v) =>
+                void updateSettings({ appearance: (v as AppSettings["appearance"]) ?? "system" })
+              }
+            />
+            <Divider inset={16} />
+            <SelectField
+              variant="settings"
               label="Default currency"
               options={CURRENCIES.map((c) => ({ value: c.code, label: `${c.code} · ${c.name}` }))}
               value={settings.currency}
               onChange={(v) => void updateSettings({ currency: v ?? "USD" })}
             />
-            <Divider />
-            <View>
-              <Text style={[styles.fieldTitle, { color: colors.text }]}>Default reminder</Text>
-              <SegmentChips
-                options={DEFAULT_REMINDER_OPTIONS.map((o) => ({
-                  value: String(o.value),
-                  label: o.label,
-                }))}
-                value={
-                  settings.defaultReminderDays == null ? "-1" : String(settings.defaultReminderDays)
+            <Divider inset={16} />
+            <View style={styles.settingsSwitchRow}>
+              <Text style={[styles.settingsSwitchLabel, { color: colors.text }]}>
+                Default reminder
+              </Text>
+              <Switch
+                value={settings.defaultReminderDays != null}
+                onValueChange={(enabled) =>
+                  void updateSettings({ defaultReminderDays: enabled ? 1 : null })
                 }
-                groupLabel="Default reminder"
-                onChange={(v) =>
-                  void updateSettings({
-                    defaultReminderDays: !v || v === "-1" ? null : parseInt(v, 10),
-                  })
-                }
+                trackColor={{ false: colors.surfaceMuted, true: colors.primary }}
+                thumbColor={colors.surfaceStrong}
+                accessibilityLabel="Default reminder"
               />
             </View>
           </SurfaceCard>
@@ -233,7 +227,15 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, gap: 26, width: "100%", maxWidth: 720, alignSelf: "center" },
   section: { gap: 10 },
   card: { padding: 18, gap: 20 },
-  fieldTitle: { fontSize: 15, fontWeight: "700", marginBottom: 10 },
+  settingsCard: { paddingVertical: 0 },
+  settingsSwitchRow: {
+    minHeight: 52,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  settingsSwitchLabel: { fontSize: 16 },
   action: {
     minHeight: 74,
     flexDirection: "row",

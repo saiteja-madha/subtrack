@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 import { useAppTheme } from "@/theme";
@@ -14,7 +13,7 @@ export default function TabsLayout() {
         default: { color: colors.textMuted, fontSize: 11, fontWeight: "600" },
         selected: { color: colors.primary, fontSize: 11, fontWeight: "600" },
       }}
-      backgroundColor={Platform.OS === "android" ? colors.surface : undefined}
+      backgroundColor={process.env.EXPO_OS === "android" ? colors.surface : undefined}
       indicatorColor={colors.primarySoft}
       rippleColor={colors.primarySoft}
       labelVisibilityMode="labeled"

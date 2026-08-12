@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useMemo } from "react";
-import { Platform, useColorScheme, type ColorValue } from "react-native";
+import React, { createContext, useMemo } from "react";
+import { useColorScheme, type ColorValue } from "react-native";
 
 import type { AppearanceMode } from "@/domain/types";
 
@@ -99,18 +99,10 @@ export function AppThemeProvider({
 }
 
 export function useAppTheme(): AppTheme {
-  return useContext(ThemeContext);
+  return React.use(ThemeContext);
 }
 
 export const radii = { sm: 10, md: 14, lg: 20, xl: 28, pill: 999 } as const;
 export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 28 } as const;
 
-export const elevation = Platform.select({
-  web: { boxShadow: "0 16px 42px rgba(23, 33, 59, 0.10)" },
-  default: {
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.12,
-    shadowRadius: 22,
-    elevation: 5,
-  },
-});
+export const elevation = { boxShadow: "0 16px 42px rgba(23, 33, 59, 0.10)" };

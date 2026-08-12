@@ -53,18 +53,19 @@ For each audit finding (an element, pattern, or screen area):
 
 ### Decision Matrix
 
-| Kill signals | Elevate signals | Action |
-|-------------|----------------|--------|
-| 3+ | 0-2 | **Remove** the element entirely |
-| 0-2 | 3+ | **Elevate** — give it more visual weight, better placement |
-| 3+ | 3+ | **Redesign** — the concept is valuable but the execution is wrong |
-| 0-2 | 0-2 | **Keep as-is** — functional but not remarkable; revisit in Phase 3 |
+| Kill signals | Elevate signals | Action                                                             |
+| ------------ | --------------- | ------------------------------------------------------------------ |
+| 3+           | 0-2             | **Remove** the element entirely                                    |
+| 0-2          | 3+              | **Elevate** — give it more visual weight, better placement         |
+| 3+           | 3+              | **Redesign** — the concept is valuable but the execution is wrong  |
+| 0-2          | 0-2             | **Keep as-is** — functional but not remarkable; revisit in Phase 3 |
 
 ---
 
 ## Application Examples
 
 **Example: Decorative divider line between cards**
+
 - Q1: Would a user need to be told? → N/A (decorative)
 - Q2: Can it be removed? → Yes, spacing alone creates separation
 - Q3: Good vs. great? → Good at best
@@ -73,6 +74,7 @@ For each audit finding (an element, pattern, or screen area):
 - Result: 4 kill signals → **Remove**
 
 **Example: Primary checkout button**
+
 - Q8: Serves current task? → Yes, directly
 - Q9: Removal makes day harder? → Yes, can't complete purchase
 - Q10: Reinforces feeling? → Should, if styled properly

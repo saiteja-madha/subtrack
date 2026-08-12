@@ -34,13 +34,21 @@ export function LoadingState() {
   );
 }
 
-export function DataErrorState({ message }: { message?: string | null }) {
+export function DataErrorState({
+  message,
+  onRetry,
+}: {
+  message?: string | null;
+  onRetry?: () => void;
+}) {
   return (
     <View style={styles.error}>
       <EmptyState
         icon="alert-circle-outline"
         title="SubTrack couldn’t load"
-        message={message ?? "Please close and reopen the app to try again."}
+        message={message ?? "Please try again."}
+        actionLabel={onRetry ? "Try again" : undefined}
+        onAction={onRetry}
       />
     </View>
   );

@@ -25,15 +25,15 @@ export function UpcomingRenewalItem({
     <View style={styles.row}>
       <CategoryAvatar category={category} name={subscription.name} size={42} />
       <View style={styles.flex}>
-        <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+        <Text selectable style={[styles.name, { color: colors.text }]} numberOfLines={1}>
           {subscription.name}
         </Text>
-        <Text style={[styles.meta, { color: colors.textMuted }]} numberOfLines={1}>
+        <Text selectable style={[styles.meta, { color: colors.textMuted }]} numberOfLines={1}>
           {relativeDateLabel(date)} ·{" "}
           {billingCycleLabel(subscription.billingInterval, subscription.billingUnit)}
         </Text>
       </View>
-      <Text style={[styles.amount, { color: colors.text }]}>
+      <Text selectable style={[styles.amount, styles.tabular, { color: colors.text }]}>
         {formatCurrency(
           minorToMajor(subscription.priceMinor, subscription.currency),
           subscription.currency,
@@ -48,4 +48,5 @@ const styles = StyleSheet.create({
   name: { fontSize: 15, fontWeight: "700" },
   meta: { fontSize: 12, marginTop: 4 },
   amount: { fontSize: 15, fontWeight: "700" },
+  tabular: { fontVariant: ["tabular-nums"] },
 });

@@ -10,6 +10,7 @@
 
 - `SurfaceCard` is the standard container for summaries, settings groups, details, and forms. It uses the themed surface and divider tokens.
 - `GlassSurface` is reserved for floating or modal interaction chrome such as selectors and confirmation dialogs. On supported iOS versions it uses `expo-glass-effect`; elsewhere it uses blur/translucency. Reduce Transparency replaces it with an opaque surface.
+- Confirmation dialogs use native bottom sheets with generously inset content, one full-width primary action, and a separate lower-emphasis cancel action.
 - `GlassIconButton` is the shared circular glass control. Supported iOS versions use interactive native glass. Fallbacks retain a 44-point target, visible border, and pressed feedback.
 - `AddSubscriptionButton.ios.tsx` uses a SwiftUI `Button` from `@expo/ui` with the system glass button style. `AddSubscriptionButton.tsx` is the cross-platform fallback.
 

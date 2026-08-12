@@ -49,7 +49,8 @@ Is this change purely visual (styling, layout, spacing)?
 ```
 
 **Examples of gray areas:**
-- Adding a `disabled` visual style → OK (visual) but don't add disable *logic*
+
+- Adding a `disabled` visual style → OK (visual) but don't add disable _logic_
 - Reordering form fields → OK (layout) but verify it doesn't break tab order or validation
 - Hiding an element at mobile breakpoint → Flag it. User may rely on it.
 - Adding a loading skeleton → OK (visual) but don't change the data fetching pattern
@@ -60,6 +61,7 @@ Is this change purely visual (styling, layout, spacing)?
 ## Functionality Protection Checklist
 
 Before implementing any visual change, verify:
+
 - [ ] All interactive elements still respond to touch/click
 - [ ] All navigation paths still work
 - [ ] All form submissions still function
@@ -72,6 +74,7 @@ Before implementing any visual change, verify:
 ## Assumption Escalation Protocol
 
 **When to escalate:**
+
 - You encounter a UI pattern with no documentation
 - A design change could be interpreted as a behavior change
 - You're unsure if a visual element has functional significance
@@ -79,9 +82,11 @@ Before implementing any visual change, verify:
 - You find what looks like a bug but might be a feature
 
 **How to escalate:**
+
 > "I noticed [specific observation with file/component reference]. Before I design for this, I want to confirm: [specific yes/no question]?"
 
 **Examples:**
+
 > "I noticed the checkout button uses `opacity: 0.5` instead of the standard disabled style. Before I change it to match the design system, I want to confirm: is this intentional, perhaps indicating a different state?"
 
 > "I noticed the card component in `MenuSection` has different spacing than the one in `CartSection`. Before I unify them, I want to confirm: are these intentionally different for content density reasons?"

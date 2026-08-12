@@ -55,7 +55,8 @@
       ],
       "expo-sqlite",
       "expo-sharing",
-      "./plugins/with-local-notifications-only"
+      "./plugins/with-local-notifications-only",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -10,20 +10,20 @@ import { useData } from "@/hooks/useData";
 
 export default function NewSubscriptionScreen() {
   const router = useRouter();
-  const { status, error, categories, settings, addSubscription } = useData();
+  const { status, error, categories, settings, addSubscription, retry } = useData();
   const [submitting, setSubmitting] = useState(false);
 
   if (status === "loading") {
     return (
-      <Screen scroll={false} header={<ScreenHeader title="New subscription" showBack />}>
+      <Screen nativeFormSheet scroll={false} header={<ScreenHeader title="New subscription" />}>
         <LoadingState />
       </Screen>
     );
   }
   if (status === "error") {
     return (
-      <Screen scroll={false} header={<ScreenHeader title="New subscription" showBack />}>
-        <DataErrorState message={error} />
+      <Screen nativeFormSheet scroll={false} header={<ScreenHeader title="New subscription" />}>
+        <DataErrorState message={error} onRetry={() => void retry()} />
       </Screen>
     );
   }
@@ -39,7 +39,11 @@ export default function NewSubscriptionScreen() {
   };
 
   return (
-    <Screen header={<ScreenHeader title="New subscription" showBack />}>
+    <Screen
+      nativeFormSheet
+      scroll={process.env.EXPO_OS !== "ios"}
+      header={<ScreenHeader title="New subscription" />}
+    >
       <SubscriptionForm
         defaultCurrency={settings.currency}
         categories={categories}

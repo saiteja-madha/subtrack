@@ -1,5 +1,4 @@
 import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
 import { subDays } from "date-fns";
 
 import { getCurrencyInfo, minorToMajor } from "@/constants/currencies";
@@ -18,7 +17,7 @@ export function notificationIdFor(subscriptionId: string): string {
 }
 
 export function configureNotifications(): void {
-  if (Platform.OS === "web") return;
+  if (process.env.EXPO_OS === "web") return;
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowBanner: true,
@@ -28,7 +27,7 @@ export function configureNotifications(): void {
     }),
   });
 
-  if (Platform.OS === "android") {
+  if (process.env.EXPO_OS === "android") {
     Notifications.setNotificationChannelAsync(CHANNEL_ID, {
       name: "Subscription reminders",
       importance: Notifications.AndroidImportance.DEFAULT,
@@ -45,7 +44,7 @@ export function configureNotifications(): void {
  * and requests permission at most once per session.
  */
 export async function ensureNotificationPermissions(): Promise<boolean> {
-  if (Platform.OS === "web") return false;
+  if (process.env.EXPO_OS === "web") return false;
   if (permissionPromise) return permissionPromise;
 
   permissionPromise = (async () => {
@@ -77,7 +76,7 @@ export async function scheduleSubscriptionReminder(
   subscription: Subscription,
   defaultReminderDays: number | null,
 ): Promise<void> {
-  if (Platform.OS === "web") return;
+  if (process.env.EXPO_OS === "web") return;
   const id = notificationIdFor(subscription.id);
 
   if (subscription.status !== "active") {
@@ -125,7 +124,7 @@ export async function scheduleSubscriptionReminder(
 }
 
 export async function cancelReminder(subscriptionId: string): Promise<void> {
-  if (Platform.OS === "web") return;
+  if (process.env.EXPO_OS === "web") return;
   await Notifications.cancelScheduledNotificationAsync(notificationIdFor(subscriptionId)).catch(
     () => {
       // Best-effort.
@@ -138,7 +137,7 @@ export async function rescheduleAllReminders(
   subscriptions: Subscription[],
   settings: AppSettings,
 ): Promise<void> {
-  if (Platform.OS === "web") return;
+  if (process.env.EXPO_OS === "web") return;
   try {
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
     const managed = scheduled.filter((request) => request.identifier?.startsWith(PREFIX));
@@ -162,7 +161,7 @@ export async function rescheduleAllReminders(
 }
 
 export async function cancelAllReminders(): Promise<void> {
-  if (Platform.OS === "web") return;
+  if (process.env.EXPO_OS === "web") return;
   try {
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
     const managed = scheduled.filter((request) => request.identifier?.startsWith(PREFIX));

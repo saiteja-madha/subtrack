@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { Icon } from "@/components/Icon";
+import { GlassIconButton } from "@/components/ui";
 import { useAppTheme } from "@/theme";
 
 export function TabHeader({
@@ -33,10 +34,12 @@ export function TabHeader({
 export function ScreenHeader({
   title,
   showBack = false,
+  backButtonVariant = "default",
   right,
 }: {
   title: string;
   showBack?: boolean;
+  backButtonVariant?: "default" | "glass";
   right?: React.ReactNode;
 }) {
   const router = useRouter();
@@ -44,7 +47,13 @@ export function ScreenHeader({
   return (
     <View style={[styles.header, { borderBottomColor: colors.divider }]}>
       <View style={styles.side}>
-        {showBack ? (
+        {showBack && backButtonVariant === "glass" ? (
+          <GlassIconButton
+            icon={<Icon name="chevron-back" size={22} color={colors.textSecondary} />}
+            onPress={() => router.back()}
+            accessibilityLabel="Back"
+          />
+        ) : showBack ? (
           <Pressable
             onPress={() => router.back()}
             style={({ pressed }) => [

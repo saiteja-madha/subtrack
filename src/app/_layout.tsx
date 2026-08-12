@@ -1,4 +1,5 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-navigation";
+import { Stack } from "expo-router/stack";
 import { StatusBar } from "expo-status-bar";
 
 import { DataProvider, useData } from "@/hooks/useData";
@@ -48,9 +49,25 @@ function AppNavigator() {
         }}
       >
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="subscription/new" options={{ presentation: "modal" }} />
+        <Stack.Screen
+          name="subscription/new"
+          options={{
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            sheetAllowedDetents: [1],
+            contentStyle: { backgroundColor: colors.background },
+          }}
+        />
         <Stack.Screen name="subscription/[id]" />
-        <Stack.Screen name="subscription/[id]/edit" />
+        <Stack.Screen
+          name="subscription/[id]/edit"
+          options={{
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            sheetAllowedDetents: [1],
+            contentStyle: { backgroundColor: colors.background },
+          }}
+        />
       </Stack>
     </ThemeProvider>
   );

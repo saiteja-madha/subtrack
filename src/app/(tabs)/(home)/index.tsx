@@ -17,7 +17,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 export default function HomeScreen() {
   const router = useRouter();
-  const { status, error, subscriptions, categories, settings, refresh } = useData();
+  const { status, error, subscriptions, categories, settings, refresh, retry } = useData();
   const { isRefreshing, onRefresh } = usePullToRefresh(refresh);
   const { colors } = useAppTheme();
   const openNew = () => router.push("/subscription/new");
@@ -30,7 +30,7 @@ export default function HomeScreen() {
   if (status === "error")
     return (
       <Screen scroll={false} header={<TabHeader title="SubTrack" />}>
-        <DataErrorState message={error} />
+        <DataErrorState message={error} onRetry={() => void retry()} />
       </Screen>
     );
   const map = new Map(categories.map((c) => [c.id, c]));

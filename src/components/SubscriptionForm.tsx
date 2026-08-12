@@ -149,6 +149,7 @@ export function SubscriptionForm({
           }
           onChange={(d) => set("startDate", formatISO(d, { representation: "date" }))}
           maximumDate={new Date()}
+          onClear={values.startDate ? () => set("startDate", null) : undefined}
         />
       </Section>
       <Section title="Organization">
@@ -166,22 +167,17 @@ export function SubscriptionForm({
         />
       </Section>
       <Section title="Reminder">
-        <View>
-          <FieldLabel>Notify me</FieldLabel>
-          <SegmentChips
-            options={SUBSCRIPTION_REMINDER_OPTIONS.map((o) => ({
-              value: o.value == null ? "default" : String(o.value),
-              label: o.label,
-            }))}
-            value={
-              values.reminderDaysBefore == null ? "default" : String(values.reminderDaysBefore)
-            }
-            groupLabel="Reminder"
-            onChange={(v) =>
-              set("reminderDaysBefore", v == null || v === "default" ? null : parseInt(v, 10))
-            }
-          />
-        </View>
+        <SelectField
+          label="Notify me"
+          options={SUBSCRIPTION_REMINDER_OPTIONS.map((o) => ({
+            value: o.value == null ? "default" : String(o.value),
+            label: o.label,
+          }))}
+          value={values.reminderDaysBefore == null ? "default" : String(values.reminderDaysBefore)}
+          onChange={(v) =>
+            set("reminderDaysBefore", v == null || v === "default" ? null : parseInt(v, 10))
+          }
+        />
       </Section>
       {showStatus ? (
         <Section title="Status">

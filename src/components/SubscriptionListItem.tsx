@@ -29,16 +29,16 @@ export function SubscriptionListItem({
     >
       <CategoryAvatar category={category} name={subscription.name} size={44} />
       <View style={styles.flex}>
-        <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+        <Text selectable style={[styles.name, { color: colors.text }]} numberOfLines={1}>
           {subscription.name}
         </Text>
-        <Text style={[styles.meta, { color: colors.textMuted }]} numberOfLines={1}>
+        <Text selectable style={[styles.meta, { color: colors.textMuted }]} numberOfLines={1}>
           {billingCycleLabel(subscription.billingInterval, subscription.billingUnit)} ·{" "}
           {formatShortDate(getNextBillingDate(subscription))}
         </Text>
       </View>
       <View style={styles.end}>
-        <Text style={[styles.amount, { color: colors.text }]}>
+        <Text selectable style={[styles.amount, styles.tabular, { color: colors.text }]}>
           {formatCurrency(
             minorToMajor(subscription.priceMinor, subscription.currency),
             subscription.currency,
@@ -63,4 +63,5 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, marginTop: 4 },
   end: { alignItems: "flex-end", gap: 5 },
   amount: { fontSize: 15, fontWeight: "700" },
+  tabular: { fontVariant: ["tabular-nums"] },
 });
