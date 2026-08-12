@@ -12,6 +12,12 @@
       "sourceType": "github",
       "skillPath": "skills/expo-liquid-glass/SKILL.md",
       "computedHash": "54e019fbdcf965286d9eda859cc30376d53e0ea22d9b41384044e9a787599265"
+    },
+    "expo-router": {
+      "source": "expo/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/expo/skills/expo-router/SKILL.md",
+      "computedHash": "b5baa66d0024536b1410136b05e83d749fb5a1c8b72326b5096193c03523361c"
     }
   }
 }

@@ -5,7 +5,7 @@ import { Icon, type IconName } from "@/components/Icon";
 import { useAppTheme } from "@/theme";
 
 const TAB_ICONS: Record<string, { default: IconName; selected: IconName }> = {
-  index: { default: "home-outline", selected: "home" },
+  "(home)": { default: "home-outline", selected: "home" },
   subscriptions: { default: "list-outline", selected: "list" },
   upcoming: { default: "calendar-outline", selected: "calendar" },
   settings: { default: "settings-outline", selected: "settings" },
@@ -46,12 +46,12 @@ export default function WebTabsLayout() {
           />
         ),
         tabBarIcon: ({ color, focused, size }) => {
-          const icons = TAB_ICONS[route.name] ?? TAB_ICONS.index;
+          const icons = TAB_ICONS[route.name] ?? TAB_ICONS["(home)"];
           return <Icon name={focused ? icons.selected : icons.default} color={color} size={size} />;
         },
       })}
     >
-      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="(home)" options={{ title: "Home" }} />
       <Tabs.Screen name="subscriptions" options={{ title: "Subscriptions" }} />
       <Tabs.Screen name="upcoming" options={{ title: "Upcoming" }} />
       <Tabs.Screen name="settings" options={{ title: "Settings" }} />

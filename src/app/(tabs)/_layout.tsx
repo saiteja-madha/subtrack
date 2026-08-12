@@ -22,7 +22,7 @@ export default function TabsLayout() {
       minimizeBehavior="never"
       unstable_nativeProps={{ colorScheme: dark ? "dark" : "light" }}
     >
-      <NativeTabs.Trigger name="index" contentStyle={{ backgroundColor: colors.background }}>
+      <NativeTabs.Trigger name="(home)" contentStyle={{ backgroundColor: colors.background }}>
         <NativeTabs.Trigger.Icon
           sf={{ default: "house", selected: "house.fill" }}
           md={{ default: "home", selected: "home_filled" }}
